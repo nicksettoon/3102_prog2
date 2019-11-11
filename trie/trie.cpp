@@ -1,6 +1,5 @@
 #include "../headers/tools.h"
-#include "../headers/trie.h"
-
+/*FILL*/
 
 trie::CompTrie()
     : term("$") 

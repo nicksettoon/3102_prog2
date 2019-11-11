@@ -1,5 +1,4 @@
 #include "../headers/tools.h"
-#include "../headers/tnode.h"
 /*FILL*/
 
 tnode::Node()   //default constuctor

@@ -1,5 +1,7 @@
 #include "../headers/tools.h"
-#include "../headers/trie.h"
+
+namespace prt = tools::print;   //namespace definition for easier use
+/*FILL*/
 
 // namespace node = tnode::Node;    //from trie.cpp
 // namespace prt = tools::print;    //from trie.cpp
