@@ -1,8 +1,9 @@
-#include "tnode.h"
+#include "../headers/tools.h"
+#include "../headers/tnode.h"
 /*FILL*/
 
 tnode::Node()   //default constuctor
-    : head(NULL), label(NULL), eow(0), right_sib(nullptr), fst_child(nullptr){}
+    : head(NULL), label(NULL), eow(0), rightsib(nullptr), child1(nullptr){}
 
 
 tnode::Node()

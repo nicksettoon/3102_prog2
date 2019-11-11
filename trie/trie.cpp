@@ -1,8 +1,6 @@
-#include "trie.h"
-#include "tools.h"
+#include "../headers/tools.h"
+#include "../headers/trie.h"
 
-namespace node = tnode::Node;
-namespace prt = tools::print;
 
 trie::CompTrie()
     : term("$") 

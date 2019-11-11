@@ -16,4 +16,4 @@ class CompTrie
     ~CompTrie();//default
 }
 
-#include "trie.cpp"
+#include "../trie.cpp"
