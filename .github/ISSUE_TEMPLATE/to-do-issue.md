@@ -4,7 +4,7 @@ about: basic template for making to-do item
 title: ''
 labels: enhancement
 assignees: ''
-projects: ''
+projects: 'prog2_project'
 
 ---
 
