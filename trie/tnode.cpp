@@ -1,27 +1,28 @@
 #include "headers/tools.h"
-/*FILL*/
+#include "headers/tnode.h"
+/*FILL_LATER*/
 
+using node = tnode::Node;   //namespace abstraction for easier use
 
-tnode::Node()   //default constuctor
+node::Node()   //default constuctor
     : head(NULL), label(NULL), eow(0), rightsib(nullptr), child1(nullptr){}
 
-
-tnode::Node()
-{//custom constructor
+// Node()
+// {//custom constructor
     /*FILL*/
-}
+// }
 
-tnode::Node* findSibling(char target_head)
+node* findSibling(char target_head)
 {//returns ptr to the sibling of this node instance whose head equals the target_head
     /*FILL*/
 }
 
-tnode::~Node()
+node::~Node()
 {//destroys the node
     /*FILL*/
 }
 
-tnode::~Node()
-{//destroys the node and all it's siblings.
+// node::~Node()
+// {//destroys the node and all it's siblings.
     /*FILL*/
-}
+// }
