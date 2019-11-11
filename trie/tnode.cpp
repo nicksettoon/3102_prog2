@@ -1,5 +1,6 @@
-#include "../headers/tools.h"
+#include "headers/tools.h"
 /*FILL*/
+
 
 tnode::Node()   //default constuctor
     : head(NULL), label(NULL), eow(0), rightsib(nullptr), child1(nullptr){}

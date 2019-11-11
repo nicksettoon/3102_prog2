@@ -10,7 +10,7 @@
             "args": [
                 "${workspaceFolder}/${relativeFileDirname}",
                 "${fileBasename}",
-                "${fileBasenameNoExtension}"
+                "${fileBasenameNoExtension}",
             ],
             "group": {
                 "kind": "build",

@@ -1,4 +1,4 @@
-#include "../headers/tools.h"
+#include "headers/tools.h"
 /*FILL*/
 
 trie::CompTrie()
