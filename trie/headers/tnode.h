@@ -4,6 +4,7 @@
 /*FILL_LATER*/
 
 using str = std::string;    //type abstraction for easier use
+auto& prt = tools::print;   //"alias" for print function for easier use
 
 namespace tnode
 {//namespace definition for use elsewhere
@@ -19,7 +20,7 @@ namespace tnode
         //constructors
         Node(); //default
         Node(Node *parent, str s); //custom
-        Node *findSibling(char target_head);  //finds the sibling containing the target_head
+        Node *findHead(char target_head);  //finds the sibling containing the target_head
 
         //destructor
         ~Node();

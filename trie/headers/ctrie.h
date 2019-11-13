@@ -2,6 +2,9 @@
 #include "tnode.h"
 /*FILL_LATER*/
 
+using trie = ctrie::CompTrie;   //namespace abstraction for easier use
+auto& prt = tools::print;   //"alias" for print function for easier use
+
 namespace ctrie
 {//namespace definition for use elsewhere
 
@@ -15,7 +18,12 @@ namespace ctrie
 
         //constructors
         CompTrie(); //default
-        CompTrie(char term, node *root); //custom
+        CompTrie(char term, node *root); //initializes Trie with given root node
+        CompTrie(char term, str raw_text[]); //initializes Trie with array of words
+
+        //functions
+        insertLL(str word); //insert word via linked list implementation
+        inserthash(str word);   //insert word via hash implementation
 
         //destructors
         ~CompTrie();//default

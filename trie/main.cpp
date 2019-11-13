@@ -7,7 +7,7 @@ auto& prt = tools::print;   //"alias" for print function
 
 int main()
 {//main function
-    tools::printFile("WORD.LST");
+    // tools::printFile("WORD.LST");
     prt("blah");
     tools::pwd();
     return 0;
