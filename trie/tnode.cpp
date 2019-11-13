@@ -7,21 +7,19 @@ using node = tnode::Node;   //namespace abstraction for easier use
 node::Node()   //default constuctor
     : head(NULL), label(NULL), eow(0), rightsib(nullptr), child1(nullptr){}
 
-node::Node(str word)
+node::Node(str in_label)
 {//lighter custom constructor for building 1st child node
     prt("Entering node head, label constructor.")
-    this->head = word[0]; //set head to first letter of the given word.
-    word.erase(0);  //erase the first letter from the word
-    this->label = word; //set label = to the rest
-    
+    this->head = in_label[0]; //set node's head to first letter of the in_label.
+    this->label = in_label; //set node's label to entire in_label
 }
 
-node::Node(char head, str label, bool eow, node* right_sib, node* child_1)
-{//custom constructor
+node::Node(str in_label, bool eow, node* right_sib, node* child_1)
+{//full custom constructor
     /*FILL*/
     prt("Entering full node constructor.")
-    this->head = head;
-    this->label = label;
+    this->head = in_label[0];
+    this->label = in_label;
     this->eow = eow;
     this->rightsib = right_sib;
     this->child1 = child_1;

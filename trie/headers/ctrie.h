@@ -26,6 +26,9 @@ namespace ctrie
         node* findWord(str target_word);   //finds the end of a given word in the trie
         bool insertLL(str target_word); //insert word via linked list implementation
         bool inserthash(str target_word);   //insert word via hash implementation
+    
+    private:
+        int checkSubstr(node* target_node, str target_word);
 
         //destructors
         ~CompTrie();//default

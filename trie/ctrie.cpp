@@ -28,24 +28,48 @@ node* trie::findWord(str target_word)
     }
 }
 
-bool trie::checkSubstring(node* target_node, str target_word)
+int trie::checkSubstr(node* target_node, str target_word)
 {//figures out if target_word is a substring of a label at target_node
-    str targetlabel = target_word.substr(1);  //erase the first letter from the word
-    int t_w_size = sizeof(targetlabel)  //get size of targetlabel
-    int i = 0; 
-    for(char c:targetlabel)
-    {
+    str& t_w = target_word;  //alias (reference) for target_word to make it easier to type
+    int i = 0;  //initialize iterator for moving through target_node's label below
+
+    for(char c:t_w)
+    {//for each char in the target_word
+        //compare it against the label @ the target_node
         if(c == target_node->label[i])
-        {//if current char in targetlabel is the same as the ith char in the node's label
-            i++;
+        {//If current char in target_word is the same as the char @ same position in the node's label
+            i++;    //move to next char in node's label and next iteration of for loop
         }
         else
-        {//case where neither the targetlabel or node's label have run out of chars, but they differ
-         //return the string index at which they diverge from one another
+        {//case 2.1: Neither target_word nor node's label have run out of chars, but the current chars differ
+         //return the string index at which they diverge for splitting later
+            //1. split label @ i
+            //2. make new node for split label
+                //3. set eow for new node to 1
+            //4. set eow on current node to 0
+            //5. make new node for remaining target_word
            return i; 
         }
     }
-    if(i < )
+    if(i == t_w.length())
+    {//case 1: If 1. for loop ended without differing strings and 2. the entire target_node's label was compared, 
+     //then the node's label is the target label.
+        target_node->eow = 1;   //set eow flag for target_node to 1
+        return -1;  //return -1 so any splitting that happens throws an invalid index error
+    }
+    else if(i < t_w.length())
+    {//case 2.2: 1. The for loop ended without differeing strings and 2. end of target_node's label was not reached
+     //The target_word is a substring of target_node's label.
+     //treat similar to case 2.1, but 
+        //1. split label @ i
+        //2. make new node for split label
+            //3. set eow for new node to 1
+        //4. set eow on current node to 1
+
+        return i;
+    }
+    else
+        prt("something went wrong in ctrie::checkSubstring! HALP!");
 }
 
 bool trie::insertLL(str target_word)
