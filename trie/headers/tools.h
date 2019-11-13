@@ -14,9 +14,14 @@ namespace tools
 
     str getPath();  //func definition so the prints can be adjacent to each other
     
-    void print(char s)
+    void print(str s)
     {//prints single string to output
         std::cout << s << std::endl;
+    }
+
+    void printc(char c)
+    {//prints single char to output
+        std::cout << c << std::endl;
     }
 
     void pwd()
@@ -34,7 +39,7 @@ namespace tools
         while(infile.is_open() && !infile.eof())
         {//while the file is open and the end hasn't been reached.
             infile >> rawtext;  //get next str in file
-            print(rawtext);     //print it
+            // print(rawtext);     //print it
         }
 
         infile.close(); //close infile

@@ -19,7 +19,7 @@ namespace tnode
 
         //constructors
         Node(); //default
-        Node(Node *parent, str s); //custom
+        Node(str s); //custom
         Node *findHead(char target_head);  //finds the sibling containing the target_head
 
         //destructor

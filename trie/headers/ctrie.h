@@ -14,16 +14,18 @@ namespace ctrie
         using node = tnode::Node;
 
         char term;   //termination character for strings
-        node *root;  //pointer to the root node of the trie instance
+        node* root;  //pointer to the root node of the trie instance
 
+    public:
         //constructors
         CompTrie(); //default
         CompTrie(char term, node *root); //initializes Trie with given root node
         CompTrie(char term, str raw_text[]); //initializes Trie with array of words
 
         //functions
-        insertLL(str word); //insert word via linked list implementation
-        inserthash(str word);   //insert word via hash implementation
+        node* findWord(str target_word);   //finds the end of a given word in the trie
+        bool insertLL(str target_word); //insert word via linked list implementation
+        bool inserthash(str target_word);   //insert word via hash implementation
 
         //destructors
         ~CompTrie();//default
