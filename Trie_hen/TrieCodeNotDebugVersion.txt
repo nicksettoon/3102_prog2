@@ -1,0 +1,259 @@
+#include<iostream>
+#include<string>
+#include<fstream>
+using namespace std;
+
+struct trieNode
+{
+    char leadChar;
+    string label;
+    trieNode *child;
+    trieNode *right;
+    bool isWord;
+};
+
+class TrieLL
+{
+    private:
+    trieNode* root;
+    trieNode* createNode(char,string,trieNode *,trieNode *,bool);
+    string determineSubstring(unsigned int,unsigned int,string);
+    public:
+    TrieLL();
+    void insert(string);
+    void search(string);
+};
+
+TrieLL::TrieLL()
+{
+    root = createNode('$',"",NULL,NULL,false);
+}
+
+void TrieLL::insert(string newWord)
+{
+    cout << "Entering " << newWord << endl;
+    //insert first word
+    if(root->child==NULL)
+    {
+        //create newNode
+        trieNode *newNode=createNode(newWord[0],newWord,NULL,NULL,true);
+        //Set newNode as root's child
+        root->child=newNode;
+        return;
+    }
+    else
+    {
+        unsigned int i=0;
+        bool inserted=false;
+        trieNode *nodePtr=root->child;
+        trieNode *prevNode=NULL;
+        trieNode *parent=root;
+        while(inserted==false)
+        {
+            //search for the word by first char in label
+            while(nodePtr!=NULL && nodePtr->label[i] < newWord[i]) //**************
+            {
+                prevNode=nodePtr;
+                nodePtr=nodePtr->right;
+            }
+             //If the first char exists on the level, then start searching through the label
+            if(nodePtr && nodePtr->label[i]==newWord[i])
+            {
+                i++;
+                bool stop=false;
+                while(i < nodePtr->label.length() && i < newWord.length() && stop==false)
+                {
+                    if(nodePtr->label[i]==newWord[i])
+                        i++;
+                    else
+                        stop=true;
+                }
+                if(stop==true) //************
+                {
+                    bool attach=false;
+                    //split at nodePtr->label.substr(0,i-1)
+                    string newLabel=determineSubstring(0,i-1,nodePtr->label);
+                    string leftChildLabel;
+                    string rightChildLabel;
+                    if(nodePtr->label[i] > newWord[i])
+                    {
+                        leftChildLabel=determineSubstring(i,newWord.length()-1,newWord);
+                        rightChildLabel=determineSubstring(i,nodePtr->label.length()-1,nodePtr->label);
+                        attach=true;
+                    }
+                    else
+                    {
+                        leftChildLabel=determineSubstring(i,nodePtr->label.length()-1,nodePtr->label);
+                        rightChildLabel=determineSubstring(i,newWord.length()-1,newWord);
+                    }
+                    //split up the nodePtr Node and give it a linkedList child
+                    nodePtr->label=newLabel;
+                    nodePtr->isWord=false;
+                    trieNode *rightNeighbor=createNode(rightChildLabel[0],rightChildLabel,NULL,NULL,true);
+                    trieNode *leftChild=createNode(leftChildLabel[0],leftChildLabel,NULL,rightNeighbor,true);
+                    if(nodePtr->child==NULL)
+                    {
+                        nodePtr->child=leftChild;
+                        inserted=true;
+                    }
+                    else
+                    {
+                        if(attach==true)
+                        {
+                            rightNeighbor->child=nodePtr->child;
+                        }
+                        else
+                        {
+                            leftChild->child=nodePtr->child;
+                        }
+                        nodePtr->child=leftChild;
+                    }
+                    inserted=true;
+                }
+                else //either nodePtr->label is a prefix of newWord or vice versa
+                {
+
+                    if(nodePtr->label.length() < newWord.length()) //*******
+                    {
+                        //nodePtr->label is a prefix of newWord
+                       if(nodePtr->child!=NULL) //**************
+                       {
+                           parent=nodePtr;
+                           prevNode=NULL;
+                           nodePtr=nodePtr->child; //go down a level and continue process on the next loop
+                           newWord=determineSubstring(i,newWord.length()-1,newWord);
+                           i=0;
+                       }
+                       else //****************
+                       {
+                           //create a child for nodePtr
+                           string childLabel=determineSubstring(i,newWord.length()-1,newWord);
+                           trieNode *newChild=createNode(childLabel[0],childLabel,NULL,NULL,true);
+                           nodePtr->child=newChild;
+                           inserted=true;
+                       }
+                    }
+                    else if(nodePtr->label.length() == newWord.length())
+                    {
+                         nodePtr->isWord=true;
+                         inserted=true;
+                    }
+                    else
+                    {
+                        string newChildLabel=determineSubstring(i,nodePtr->label.size()-1,nodePtr->label);
+                        nodePtr->label=determineSubstring(0,nodePtr->label.size()-1,nodePtr->label);
+                        nodePtr->isWord=true;
+                        trieNode *newNode=createNode(newChildLabel[0],newChildLabel,nodePtr->child,NULL,true);
+                        nodePtr->child=newNode;
+                        inserted=true;
+                    }
+                }
+            }
+            else
+            {
+                if(prevNode==NULL) //Node needs to be head of LL //*****************
+                {
+                    trieNode* newNode=createNode(newWord[i],newWord,NULL,nodePtr,true);
+                    parent->child=newNode;
+                    inserted=true;
+                }
+                else //************
+                {
+                    //Node needs to be inserted either at end or between two nodes
+                    trieNode *newNode=createNode(newWord[0],newWord,NULL,nodePtr,true);
+                    prevNode->right=newNode;
+                    inserted=true;
+                }
+
+            }
+        }
+    }
+}
+
+void TrieLL::search(string s)
+{
+    trieNode *nodePtr=root->child;
+    if(nodePtr==NULL)
+    {
+        cout << "There's nothing in the tree yo " << endl;
+        return;
+    }
+    else
+    {
+        unsigned int i=0;
+        while(i<s.length())
+        {
+            while(nodePtr && nodePtr->leadChar < s[i])
+            {
+                nodePtr=nodePtr->right;
+            }
+            if(!nodePtr)
+             {
+                cout << s << " is not found " << endl;
+                return;
+             }
+            else
+            {
+                i++;
+                bool exit=false;
+                while(i < nodePtr->label.length() && exit==false)
+                {
+                    if(s[i]==nodePtr->label[i])
+                        i++;
+                    else
+                     {
+                         nodePtr=nodePtr->child;
+                         exit=true;
+                     }
+
+                }
+            }
+        }
+
+        cout << s << " was found!!!!" << endl;
+
+    }
+}
+
+trieNode* TrieLL::createNode(char le,string la,trieNode *c,trieNode *r ,bool cond)
+{
+    trieNode *newNode;
+    newNode = new trieNode;
+    newNode->leadChar=le;
+    newNode->label=la;
+    newNode->child=c;
+    newNode->right=r;
+    newNode->isWord=cond;
+    return newNode;
+}
+
+string TrieLL::determineSubstring(unsigned int e1,unsigned int e2 ,string s)
+{
+    string returnString;
+    if(e1==e2)
+        returnString=s[e1];
+    else
+        returnString=s.substr(e1,e2);
+
+    return returnString;
+}
+
+int main()
+{
+    TrieLL *myTrie;
+    myTrie= new TrieLL;
+    string word;
+    ifstream data;
+    data.open("C:\\Users\\Djizi\\OneDrive\\Desktop\\LSU FALL 2019\\Advanced Algorithms\\HW\\HW3\\trieWords.txt");
+    while(data >> word)
+        myTrie->insert(word);
+    data.close();
+
+      data.open("C:\\Users\\Djizi\\OneDrive\\Desktop\\LSU FALL 2019\\Advanced Algorithms\\HW\\HW3\\trieWords.txt");
+    while(data >> word)
+        myTrie->search(word);
+    data.close();
+
+
+    return 0;
+}
