@@ -23,29 +23,39 @@ namespace ctrie
         CompTrie(char term, str raw_text[]); //initializes Trie with array of words
 
         //functions
-        node* findWord(str target_word);   //finds the end of a given word in the trie
-        bool insertLL(str target_word); //insert word via linked list implementation
-        bool inserthash(str target_word);   //insert word via hash implementation
-    
+        // node* getWord(node target_node);    //search function
+        void searchTrie(str target_word);
+        node* insertFront(str target_word); //frontend for inserting word via linked list implementation
+        node* insertFrontHash(str target_word);   //frontend for inserting word via hash implementation
+
     private:
         enum compCase
-        {//restrict possible cases of compResult
-            CaseSubstr,     //the target_label is a substring of the node_label
-            CaseDiv,        //the target_word diverges from the label @ i
-            CaseSuperstr,   //the target_word is a superstring of the label (label diverges from target_word @ i)
-            CaseInTrie      //the exact target_word is in the trie
-        }
-        struct searchStack
+        struct compResult
         {//struct for returning things from trie::compareLabel()
-            char wordhead;
-            node* targetnode;
-            str targetlabel;
             int index;  //index at which the strings need to be split
             case compCase; //resulting case of the if statements
         }
-        int compareLabel(node* target_node, str target_word);
+        struct searchStack
+        {//struct for passing the state of a search between functions
+            char wordhead;
+            node* targetnode;
+            str targetlabel;
+            compResult result;
+        }
+
+        compResult compareLabel(node* target_node, str target_label);
+            //compares target_label to label @ target_node
+        searchStack searchTrie(searchStack stack_in); //recursive search function
+        void insertLL(searchStack stack_in);    //does the actual insertion
 
         //destructors
-        ~CompTrie();//default
+        // ~CompTrie();//default
     };
+
+    // class CompTrieHash : public CompTrie
+    //{//Child class of CompTrie which implements traversal and insertion of nodes via hash tables.}
+
+    // class CompTrieLL : public CompTrie
+    //{//Child class of CompTrie which implements traversal and insertion of nodes via linked lists.}
 }
+
