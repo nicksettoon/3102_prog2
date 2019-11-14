@@ -28,7 +28,19 @@ namespace ctrie
         bool inserthash(str target_word);   //insert word via hash implementation
     
     private:
-        int checkSubstr(node* target_node, str target_word);
+        enum compCase
+        {//restrict possible cases of compResult
+            CaseSubstr,     //the target_label is a substring of the node_label
+            CaseDiv,        //the target_word diverges from the label @ i
+            CaseSuperstr,   //the target_word is a superstring of the label (label diverges from target_word @ i)
+            CaseInTrie      //the exact target_word is in the trie
+        }
+        struct compResult
+        {//struct for returning things from trie::compareLabel()
+            int index;  //index at which the strings need to be split
+            case compCase;  //resulting case of the if statements
+        }
+        int compareLabel(node* target_node, str target_word);
 
         //destructors
         ~CompTrie();//default

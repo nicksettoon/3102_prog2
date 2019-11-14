@@ -7,6 +7,7 @@
 #include <limits.h> //needed for getPath()
 #include <unistd.h> //needed for getPath()
 /*FILL_LATER*/
+//function parameters are underscored. function variables are just appended.
 
 namespace tools
 {//namespace for use elsewhere

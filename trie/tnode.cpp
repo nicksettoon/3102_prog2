@@ -1,6 +1,7 @@
 #include "headers/tools.h"
 #include "headers/tnode.h"
 /*FILL_LATER*/
+//function parameters are underscored. function variables are just appended.
 
 using node = tnode::Node;   //namespace abstraction for easier use
 
@@ -11,15 +12,15 @@ node::Node(str in_label)
 {//lighter custom constructor for building 1st child node
     prt("Entering node head, label constructor.")
     this->head = in_label[0]; //set node's head to first letter of the in_label.
-    this->label = in_label; //set node's label to entire in_label
+    this->label = in_label.substr(1); //set node's label to remaining in_label
 }
 
 node::Node(str in_label, bool eow, node* right_sib, node* child_1)
 {//full custom constructor
     /*FILL*/
     prt("Entering full node constructor.")
-    this->head = in_label[0];
-    this->label = in_label;
+    this->head = in_label[0]; //set node's head to first letter of the in_label.
+    this->label = in_label.substr(1); //set node's label to remaining in_label
     this->eow = eow;
     this->rightsib = right_sib;
     this->child1 = child_1;

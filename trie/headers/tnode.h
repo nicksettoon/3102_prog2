@@ -9,7 +9,7 @@ auto& prt = tools::print;   //"alias" for print function for easier use
 namespace tnode
 {//namespace definition for use elsewhere
     
-    struct Node
+    class Node
     {//basic building block for compact trie
         char head;          //can be null for root, first char in label
         str label;          //can be null for root, but holds compacted strings in words
