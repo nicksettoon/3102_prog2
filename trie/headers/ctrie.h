@@ -35,10 +35,13 @@ namespace ctrie
             CaseSuperstr,   //the target_word is a superstring of the label (label diverges from target_word @ i)
             CaseInTrie      //the exact target_word is in the trie
         }
-        struct compResult
+        struct searchStack
         {//struct for returning things from trie::compareLabel()
+            char wordhead;
+            node* targetnode;
+            str targetlabel;
             int index;  //index at which the strings need to be split
-            case compCase;  //resulting case of the if statements
+            case compCase; //resulting case of the if statements
         }
         int compareLabel(node* target_node, str target_word);
 

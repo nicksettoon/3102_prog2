@@ -12,6 +12,46 @@ trie::CompTrie()
     this->root = newroot;   //assign it to this CompTrie's root ptr
 }
 
+node* trie::switchLL(node* target_node, str target_label, compResult result)
+{//function for abstracting the switch statement from findWord() and allowing recursion
+    switch (result.compCase)
+    {
+    case CaseSuperstr:
+        str nextlabel = targetlabel.substr(result.index);
+        /*turns out the index returned from compareLabel() is the position where a split would have happend
+        and as such it signifies where to split the targetlabel to pass it on.*/
+        
+        //move one level down
+        wordhead = nextlabel[0]; //get new wordhead again
+        targetnode = targetnode->child1.findHead(wordhead); //find node with that wordhead
+        result = compareLabel(targetnode, nextlabel.substr(1)); //compare labels again
+        switchLL(targetnode, nextlabel.substr(1), result); //recurse
+        break;
+    case CaseDiv:
+        //divides node into two child nodes and a parent
+        //1. split node_label @ i
+        
+        //2. make new node for remaining node_label
+            //2.1 set eow for that node to 1
+        //4. set eow on current node to 0
+        //5. make new node for remaining target_label
+        break;
+    case CaseSubstr:
+        //1. split label @ i
+        //2. make new_node for split label
+            //2.1 set eow for new_node to 1
+        //4. set eow on target_node to 1
+        break;
+    case CaseInTrie:
+        //1. change eow flag on target_node to 1
+        break;
+    default
+        // throw exception;
+        prt("Somehow result.case is not correct in findWord()")
+        break;
+    }
+}
+
 node* trie::findWord(str target_word)
 {//finds word in trie. Not recursively called
     char wordhead = target_word[0]; //get first letter of the given word.
@@ -26,34 +66,7 @@ node* trie::findWord(str target_word)
     {//figure out if target_word's label is substring of label
         str targetlabel = target_word.substr(1);
         compResult result = compareLabel(targetnode, targetlabel);
-        switch (result.case)
-        {
-        case CaseSuperstr:
-            //move one level down
-            //find new target_node
-            //compare labels again
-            break;
-        case CaseDiv:
-            //1. split node_label @ i
-            //2. make new node for remaining node_label
-                //2.1 set eow for that node to 1
-            //4. set eow on current node to 0
-            //5. make new node for remaining target_label
-            break;
-        case CaseSubstr:
-            //1. split label @ i
-            //2. make new_node for split label
-                //2.1 set eow for new_node to 1
-            //4. set eow on target_node to 1
-            break;
-        case CaseInTrie:
-            //1. change eow flag on target_node to 1
-            break;
-        default
-            // throw exception;
-            prt("Somehow result.case is not correct in findWord()")
-            break;
-        }
+        switchLL(targetnode, targetlabel, result); 
     }
 }
 
@@ -64,6 +77,7 @@ trie::compResult trie::compareLabel(node* target_node, str target_label)
     str& n_l = target_node->label;      //reference ("node label") to make it easier to type
 
     int i = 0;  //initialize iterator for moving through target_node's label below
+    int cpos = 0;
     trie::compResult result;    //instantiate struct for returning later
 
     for(char c:t_l) //What if comparing single letter which already exists at target_node? c=null?
@@ -72,7 +86,7 @@ trie::compResult trie::compareLabel(node* target_node, str target_label)
         if(i == n_l.length())
         {//case 1: If the index for node_label is equal to the  length of node_label and
          //the for loop is still going, the target_label is a superstring of the node_label
-            result.index = -1;  //return bad index so no splitting can occur
+            result.index = i;  //return index of where to begin 
             result.compCase = CaseSuperstr; //set case to show the target_label is a superstring of the node_label
             return result;
         }
@@ -105,7 +119,7 @@ trie::compResult trie::compareLabel(node* target_node, str target_label)
         return result;
     }
     else
-        prt("Something went wrong in ctrie::compareLabel! HALP!");
+        prt("Something went wrong in ctrie::compareLabel! HELP!");
 }
 
 bool trie::insertLL(str target_label)
@@ -120,12 +134,7 @@ bool trie::insertLL(str target_label)
     else
     {//find node where word should be inserted
         node* insertnode = trie::findWord(target_label);
-        if(insertnode->eow)
-        {//if the discovered node is the end node of a full word
-
-        }
     }
-
 }
 
 // trie::~CompTrie()
