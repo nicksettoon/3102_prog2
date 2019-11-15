@@ -1,39 +1,68 @@
 #include "headers/tools.h"
 #include "headers/ctrie.h"
 #include <stdio.h>
+#include <memory>
+
 /*FILL_LATER*/
 //function parameters are underscored. function variables are just appended.
+using node = tnode::Node;
+using stack = ctrie::Insertable::searchStack;
 
-trie::CompTrie()
-    : term('$') 
+lltrie::LLCompTrie()
 {//default constructor
     prt("Entering default CompTrie constructor."); //notification
-    node* newroot = new node;   //make new, empty node with default constructor
-    this->root = newroot;   //assign it to this CompTrie's root ptr
+    this->root = std::make_shared<node>();   //create smart shared pointer for root node
 }
 
-node* trie::insertFront(str target_word)
+node* lltrie::insert(str target_word) override
 {//frontend for inserting word via linked list implementation
-    prt("Entering insertFrontLL().")
+    prt("Entering LLinsert().")
 
     if(this->root->child1 == nullptr)
     {//if there is no first child of this trie
         prt("Root node has no children yet.")
-        this->root->child1 = new node(target_word, 1); //make one with the given word
+        add(str::make_shared<node>(target_word, 1), this->root, 1); //add new node w/ target_word as child of root node
+        // this->root->child1 = new node(target_word, 1); //make one with the given word
         return this->root->child1;
     }
-    // if(findWord(target_word))
-    // {//if word is found in the trie.
-    //     prt("Word already in trie.")
-    // }
-    // else
-    // {//insert word into trie.
-    //     prt("Word not in trie. Inserting...")
-
-    // }
+    else
+    {
+        //prep searchStack for searchTrie()
+        std::shared_ptr<stack> newstack = std::make_shared<stack>(target_word, this->root->child1);
+        //send it off
+        resultstack = searchTrie(newstack);
+    }
 }
 
-void trie::insertLL(searchStack stack_in)
+void lltrie::add(node* in_node, node* neighbor, bool child) override
+{//actually responsible for adding a node at a given neighbor node
+
+    if(child)
+        neighbor->child1 = in_node;     //add given node as child
+    else
+        neightbor->rightsib = in_node;  //add given node to right sibling
+}
+
+void lltrie::edit(node* target_node, str new_label, bool e_o_w) override
+{//edits target node and returns pointer to that node
+    target_node->label = new_label;
+    if(e_o_w)
+        target_node->eow = 1;
+}
+
+stack* lltrie::searchTrie(searchStack& stack_in) override
+{//finds word in trie. Not recursively called
+    prt("Entering searchTrie().")
+    // stack.targetnode = this->root->child1.findHead(wordhead);  //try to find the node with that letter    
+    
+    //figure out if target_word's label is substring of label
+
+    stack_in.result = std::make_shared<stack>(compareLabel(searchStack& stack_in));
+    switchLL(targetnode, targetlabel, result); 
+    
+}
+
+void trie::insert(searchStack stack_in)
 {//function for abstracting the switch statement from findWord() and allowing recursion
     switch (result.compCase)
     {
@@ -73,26 +102,6 @@ void trie::insertLL(searchStack stack_in)
     }
 }
 
-trie::searchStack trie::searchTrie(searchStack stack_in)
-{//finds word in trie. Not recursively called
-    prt("Entering searchTrie().")
-    searchStack stack = new searchStack;
-    stack.wordhead = target_word[0]; //get first letter of the given word.
-    stack.targetnode = this->root->child1.findHead(wordhead);  //try to find the node with that letter    
-    stack.targetlabel = target_word.substr(1);
-
-    if(targetnode == nullptr;
-    {//if findHead() didn't find a child with target wordhead at first level of tree
-        printf("%s not in trie.", target_word);
-        return targetnode;
-    }
-    else
-    {//figure out if target_word's label is substring of label
-        str targetlabel = target_word.substr(1);
-        compResult result = compareLabel(targetnode, targetlabel);
-        switchLL(targetnode, targetlabel, result); 
-    }
-}
 
 trie::compResult trie::compareLabel(node* target_node, str target_label)
 {//Compares the target_label to the node_label at target_node.
@@ -169,10 +178,23 @@ trie::compResult
     int index;  //index at which the strings need to be split
     case compCase; //resulting case of the if statements
 }
-trie::searchStack
+
+ctrie::Insertable::searchStack
 {//struct for passing the state of a search between functions
-    char wordhead;
-    node* targetnode;
-    str targetlabel;
-    compResult result;
+public:
+    //fields
+    char wordhead;      //current wordhead of word being searched.
+    node* targetnode;   //current targetnode for compareLabel()
+    str targetlabel;    //current targetlabel for compareLabel()
+    compResult* result; //last result of compareLabel()
+    //constructors
+    searchStack(char wordhead, node* target_node, str target_label, compResult result);  //constructor
+}
+
+ctrie::Insertable::searchStack(str target_word, node* child_1)
+{//constructor for searchStack struct
+        this->wordhead = target_word[0];     //set wordhead
+        this->targetnode = child_1.findHead(this->word_head); //set new target_node with result of findHead() on the 1st child
+        this->targetlabel = target_word.substr(1);   //set target_label to everything after the wordhead
+        this->result = nullptr;      //set result to nullptr cause no comparison has happened yet
 }

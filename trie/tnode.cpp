@@ -3,20 +3,20 @@
 /*FILL_LATER*/
 //function parameters are underscored. function variables are just appended.
 
-using node = tnode::Node;   //namespace abstraction for easier use
+auto& prt = tools::print;   //"alias" for print function for easier use 
 
-node::Node()   //default constuctor
+tnode::Node()   //default constuctor
     : head(NULL), label(NULL), eow(0), rightsib(nullptr), child1(nullptr){}
 
-node::Node(str word_in, bool eow)
+tnode::Node(str word_in, bool e_o_w)
 {//lighter custom constructor for building 1st child node
     prt("Entering word_in constructor.")
     this->head = word_in[0]; //set node's head to first letter of the word_in.
     this->label = word_in.substr(1); //set node's label to remaining word_in
-    this->eow = 1;
+    this->eow = e_o_w;
 }
 
-node::Node(str word_in, bool eow, node* right_sib, node* child_1)
+tnode::Node(str word_in, bool eow, node* right_sib, node* child_1)
 {//full custom constructor
     /*FILL*/
     prt("Entering full node constructor.")
@@ -27,7 +27,7 @@ node::Node(str word_in, bool eow, node* right_sib, node* child_1)
     this->child1 = child_1;
 }
 
-node* node::findHead(char target_head)
+tnode::node* tnode::findHead(char target_head)
 {//returns ptr to the sibling of this node instance or the instance itself if its head equals the target_head
     /*FILL*/
     prt("Entering findHead.")
@@ -48,10 +48,11 @@ node* node::findHead(char target_head)
     return targetnode;
 }
 
-// node::~Node()
-// {//destroys the node
+tnode::~Node()
+{//destroys the node
     /*FILL*/
-// }
+    prt("Destroying node.");
+}
 
 // node::~Node()
 // {//destroys the node and all it's siblings.
