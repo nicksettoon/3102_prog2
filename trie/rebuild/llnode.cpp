@@ -1,15 +1,15 @@
 // #include "headers/tools.h"
-#include "tnode.h"
+#include "headers/llnode.h"
 /*FILL_LATER*/
 //function parameters are underscored. function variables are just appended.
 
 // auto& prt = tools::print;   //"alias" for print function for easier use 
-using node = tnode::Node;
+using node = LLNode; //"alias" for LLNode to make it easier to type
 
-tnode::Node::Node()   //default constuctor
+node::LLNode()   //default constuctor
     : head('\0'), label(""), eow(0), rightsib(nullptr), child1(nullptr){}
 
-tnode::Node::Node(str word_in, bool e_o_w)
+node::LLNode(str word_in, bool e_o_w)
 {//lighter custom constructor for building 1st child node
     // prt("Entering word_in constructor.")
     head = word_in[0]; //set node's head to first letter of the word_in.
@@ -17,7 +17,7 @@ tnode::Node::Node(str word_in, bool e_o_w)
     eow = e_o_w;
 }
 
-tnode::Node::Node(str word_in, bool e_o_w, node* right_sib, node* child_1)
+node::LLNode(str word_in, bool e_o_w, node* right_sib, node* child_1)
 {//full custom constructor
     /*FILL*/
     // prt("Entering full node constructor.")
@@ -51,7 +51,8 @@ node* node::findHead(char target_head)
 
 void node::print()
 {//prints a single node
-    std::cout << "head: " << this->head << "\tlabel: " << this->label << "\tword? " << this->eow << std::endl;
+    str eow = this->eow == 1 ? "yes" : "no";
+    std::cout << "head: " << this->head << "\tlabel: " << this->label << "\tEoW? " << eow << std::endl;
 }
 
 void node::printSibs()

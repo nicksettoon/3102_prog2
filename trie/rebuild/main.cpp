@@ -1,9 +1,8 @@
 #include <iostream>
-#include "test.h"
-#include "tnode.h"
+#include "headers/lltrie.h"
 #include <stdio.h>
 
-using node = tnode::Node;
+using node = LLNode;
 
 int main()
 {
@@ -12,6 +11,7 @@ int main()
     node* node2 = new node("ca", 0, node3, nullptr);
     node* node1 = new node("ba", 0, node2, nullptr);
 
+    node1->printSibs();
     // printf("wordhead: %c\n", node1->head);
     // std::cout << "label: " << node1->label << std::endl;
     // str eow = (node1->eow == 1) ? "yes":"no";
