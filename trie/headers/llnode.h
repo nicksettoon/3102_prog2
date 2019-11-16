@@ -1,9 +1,9 @@
 #pragma once
-#include <string>
-#include <iostream>
-#include <memory>
+#include <string>   //included in llnode.h
+#include <iostream> //included in llnode.h
+#include <memory>   //included in llnode.h
+#include <stdio.h>  //included in llnode.h
 // #include "tools.h"
-/*FILL_LATER*/
 
 struct LLNode
 {//basic building block for compact trie
@@ -26,5 +26,5 @@ struct LLNode
     void deleteNode(char c); //finds node with head c and deletes it
 
     //destructor
-    // ~LLNode();
+    ~LLNode();
 };

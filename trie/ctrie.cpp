@@ -8,6 +8,7 @@ compResult::compResult(int index_in, CompCase case_in)
 {//constructor for compResult struct
     index = index_in;
     resultcase = case_in;
+    endsearch = 0;
 }
 
 comp CompTrie::compareLabel(node target_node, str target_label)
@@ -28,7 +29,8 @@ comp CompTrie::compareLabel(node target_node, str target_label)
          //the for loop is still going, the target_label is a superstring of the node_label
             // prt("hit case 1");
             result->index = i;  //return index of where to begin 
-            result->resultcase; //case to show the target_label is a superstring of the node_label
+            result->resultcase = CaseSuperstr; //case to show the target_label is a superstring of the node_label
+            result->endsearch = 0;
             return result;
         }
 
@@ -42,6 +44,7 @@ comp CompTrie::compareLabel(node target_node, str target_label)
             // prt("hit case 2.1");
             result->index = i; //return the index at which they diverge for splitting later
             result->resultcase = CaseDiv; //set case to show the target_label diverges from the node label at i
+            result->endsearch = 1;
             return result; 
         }
     }
@@ -52,6 +55,7 @@ comp CompTrie::compareLabel(node target_node, str target_label)
         // prt("hit case 2.1");
         result->index = i; //return the index at which they diverge for splitting later
         result->resultcase = CaseSubstr;   //set case to show the target_label is a substring of the label
+        result->endsearch = 1;
         return result;
     }
     else if(i == n_l.length())
@@ -60,6 +64,7 @@ comp CompTrie::compareLabel(node target_node, str target_label)
         // prt("hit case 3");
         result->index = -1;
         result->resultcase = CaseInTrie;   //set case to show the target_label is in the trie
+        result->endsearch = 1;
         return result;
     }
     else
