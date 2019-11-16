@@ -26,7 +26,7 @@ searchStack::~searchStack()
 
 lltrie::LLCompTrie()
 {//default constructor
-    // prt("Entering default CompTrie constructor."); //notification
+    printf("\nConstructing LLCompTrie.\n"); //notification
     this->root = std::make_shared<LLNode>();   //create smart shared pointer for root node
 }
 
@@ -120,7 +120,7 @@ void lltrie::add(snode in_node, snode neighbor, bool child)
     }
 }
 
-void lltrie::insert(str target_word)
+bool lltrie::insert(str target_word)
 {//frontend for inserting word via linked list implementation
     // prt("Entering LLinsert().")
 
@@ -131,6 +131,8 @@ void lltrie::insert(str target_word)
         add(newchild, this->root, 1); //add new node w/ target_word as child of root node
         // this->root->child1 = new node(target_word, 1); //make one with the given word
         // return this->root->child1;
+        std::cout << "Inserted " << target_word << std::endl;
+        return 1;
     }
 
     snode targetnode = this->root->child1->findHead(target_word[0]); //search for node with head=first letter of target word
@@ -140,6 +142,8 @@ void lltrie::insert(str target_word)
         snode newnode = std::make_shared<LLNode>(target_word, 1);   //make newnode
         add(newnode, targetnode, 0);    //add newnode inbetween neighbor and neighbor's rightsib
         // return newnode; //return inserted node
+        std::cout << "Inserted " << target_word << std::endl;
+        return 1;
     }
     else //targetnode->head == target_word[0]
     {//make new searchStack with target_word, and targetnode
@@ -151,6 +155,17 @@ void lltrie::insert(str target_word)
     }
     //after search has finished insert node based on newstack->result.resultcase
     bool success = insertCase(newstack);
+    if(success)
+    {
+        std::cout << "Inserted " << target_word << std::endl;
+        return success;
+    }
+    else
+    {
+        std::cout << "Failed to insert " << target_word << std::endl;
+        return ~success;
+    }
+
 }
 
 bool lltrie::insertCase(stack stack_in)
@@ -192,7 +207,7 @@ bool lltrie::insertCase(stack stack_in)
         inserted = 1;
         break;
     case CaseSubstr:
-        printf("Entering CaseSubstr.");
+        printf("\nEntering CaseSubstr.\n");
         //1. make new_node for split label
         node1 = std::make_shared<LLNode>(tn->label.substr(res->index),tn->eow);
             //2.1 set eow for new_node to 1
@@ -202,15 +217,20 @@ bool lltrie::insertCase(stack stack_in)
         inserted = 1;
         break;
     case CaseInTrie:
-        printf("Entering CaseInTrie.");
+        printf("\nEntering CaseInTrie.\n");
         tn->eow = 1; //Change eow flag on target_node to 1
         inserted = 1;
         break;
     default:
         // throw exception;
-        printf("insertCase() did not hit any of the valid insert cases.");
+        printf("\ninsertCase() did not hit any of the valid insert cases.\n");
         inserted = 0;
         break;
     }
     return inserted;
+}
+
+lltrie::~LLCompTrie()
+{//default constructor
+    printf("\nDeleting LLCompTrie.\n"); //notification
 }

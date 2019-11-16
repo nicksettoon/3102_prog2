@@ -18,7 +18,7 @@ compResult::compResult(int index_in, CompCase case_in)
 comp CompTrie::compareLabel(node target_node, str target_label)
 {//Compares the target_label to the node_label at target_node.
  //returns case the comparison falls under, as well as the index at which to split if necessary
-    // prt("Entering compareLabel().")
+    printf("\nEntering compareLabel().\n");
     str& t_l = target_label;            //reference ("target label") to make it easier to type
     str& n_l = target_node->label;      //reference ("node label") to make it easier to type
 
@@ -78,10 +78,10 @@ comp CompTrie::compareLabel(node target_node, str target_label)
 
 CompTrie::CompTrie()
 {
-    printf("Constructing CompTrie.");
+    printf("\nConstructing CompTrie.\n");
 }
 
 CompTrie::~CompTrie()
 {
-    printf("Deleteing CompTrie.");
+    printf("\nDeleteing CompTrie.\n");
 }

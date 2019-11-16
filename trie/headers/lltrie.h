@@ -28,8 +28,9 @@ class LLCompTrie : public CompTrie::CompTrie
         LLCompTrie();
 
         //functions
-        void insert(std::string target_word); //front end for inserting words
+        bool insert(std::string target_word); //front end for inserting words
         void search(std::string target_word);  //front end for search
+        ~LLCompTrie();
 
     private:
         //functions

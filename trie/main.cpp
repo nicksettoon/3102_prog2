@@ -1,4 +1,4 @@
-#include "headers/llnode.h"
+#include "headers/lltrie.h"
 // #include <string>   //included in llnode.h
 // #include <iostream> //included in llnode.h
 // #include <memory>   //included in llnode.h
@@ -12,7 +12,25 @@ int main()
 {
     // LLNode* root = initNodes();
     // snode st = root->child1;
+    LLCompTrie trie;
 
+    trie.insert("bad");
+
+    trie.insert("cadet");
+    trie.insert("add");
+    trie.insert("bat");
+    trie.insert("babbage");
+    trie.insert("batter");
+
+    trie.search("bad");
+    trie.search("cadet");
+    trie.search("add");
+    trie.search("bat");
+    trie.search("babbage");
+    trie.search("batter");
+    trie.search("adder");
+
+    std::cin.get();
     //find place newnode should be placed at
 }
 

@@ -98,7 +98,7 @@ void LLNode::deleteNode(char c)
 LLNode::~LLNode()
 {//destroys the node
     /*FILL*/
-    printf("Deleting node: ");
+    printf("\nDeleting node: \n");
     this->print();
     printf("\n");
     // this->leftsib->rightsib = this->rightsib;
