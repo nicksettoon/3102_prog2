@@ -26,17 +26,17 @@ LLNode::LLNode(str word_in, bool e_o_w)
     eow = e_o_w;
 }
 
-LLNode::LLNode(str word_in, bool e_o_w, snode left_sib, snode right_sib, snode child_1)
-{//full custom constructor
-    /*FILL*/
-    printf("Creating node with full constructor.\n");
-    head = word_in[0]; //set node's head to first letter of the word_in.
-    label = word_in.substr(1); //set node's label to remaining word_in
-    eow = e_o_w;
-    leftsib = left_sib;
-    rightsib = right_sib;
-    child1 = child_1;
-}
+// LLNode::LLNode(str word_in, bool e_o_w, snode left_sib, snode right_sib, snode child_1)
+// {//full custom constructor
+//     /*FILL*/
+//     printf("Creating node with full constructor.\n");
+//     head = word_in[0]; //set node's head to first letter of the word_in.
+//     label = word_in.substr(1); //set node's label to remaining word_in
+//     eow = e_o_w;
+//     leftsib = left_sib;
+//     rightsib = right_sib;
+//     child1 = child_1;
+// }
 
 snode LLNode::findHead(char target_head)
 {//returns ptr to the sibling of this node instance or the instance itself if its head equals the target_head

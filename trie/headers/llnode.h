@@ -1,9 +1,8 @@
 #pragma once
-#include <string>   //included in llnode.h
-#include <iostream> //included in llnode.h
-#include <memory>   //included in llnode.h
-#include <stdio.h>  //included in llnode.h
-// #include "tools.h"
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdio.h>
 
 struct LLNode
 {//basic building block for compact trie
@@ -18,7 +17,9 @@ struct LLNode
     LLNode(); //default
     LLNode(char head_in); //custom constructor
     LLNode(std::string word_in, bool e_o_w); //basic custom constructor
-    LLNode(std::string word_in, bool e_o_w, std::shared_ptr<LLNode> leftsib, std::shared_ptr<LLNode> right_sib, std::shared_ptr<LLNode> child_1);  //full custom constructor
+    // LLNode(std::string word_in, bool e_o_w, std::shared_ptr<LLNode> leftsib, std::shared_ptr<LLNode> right_sib, std::shared_ptr<LLNode> child_1);  //full custom constructor
+
+    //functions
     std::shared_ptr<LLNode> findHead(char target_head);  //finds the sibling containing the target_head
     void printSibs(); //prints the sibling nodes from the target_node down the line
     void print(); //prints the node instance

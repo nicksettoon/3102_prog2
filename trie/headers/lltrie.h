@@ -18,7 +18,7 @@ struct searchStack
 };
 
 
-class LLCompTrie : public CompTrie
+class LLCompTrie : public CompTrie::CompTrie
 {//Child class of CompTrie which implements traversal and insertion of nodes via linked lists.
     public:
         //fields
@@ -28,12 +28,13 @@ class LLCompTrie : public CompTrie
         LLCompTrie();
 
         //functions
-        void insert(str target_word) //front end for inserting words
-        node* search(str target_word);  //front end for search
+        void insert(std::string target_word); //front end for inserting words
+        void search(std::string target_word);  //front end for search
+
     private:
         //functions
         std::shared_ptr<searchStack> searchTrie(std::shared_ptr<searchStack> stack_in); //recursive search function
         void add(std::shared_ptr<LLNode> in_node, std::shared_ptr<LLNode> neighbor, bool child);  //actually creates and adds a node
-        stack evalCase(compResult result_in, stack stack_in);
-        bool insertCase(stack stack_in);
+        std::shared_ptr<searchStack> evalCase(std::shared_ptr<searchStack> stack_in);
+        bool insertCase(std::shared_ptr<searchStack> stack_in);
 };

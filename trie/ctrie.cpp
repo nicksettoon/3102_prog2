@@ -1,4 +1,8 @@
 #include "headers/ctrie.h"
+// #include <string>   //included in llnode.h
+// #include <iostream> //included in llnode.h
+// #include <memory>   //included in llnode.h
+// #include <stdio.h>  //included in llnode.h
 
 using str = std::string;
 using node = std::shared_ptr<LLNode>; //"alias" for LLNode to make it easier to type
@@ -70,4 +74,14 @@ comp CompTrie::compareLabel(node target_node, str target_label)
     else
         // prt("Something went wrong in ctrie::compareLabel! HELP!");
         return result;
+}
+
+CompTrie::CompTrie()
+{
+    printf("Constructing CompTrie.");
+}
+
+CompTrie::~CompTrie()
+{
+    printf("Deleteing CompTrie.");
 }

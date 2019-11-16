@@ -40,10 +40,10 @@ class CompTrie : public Insertable
         CompTrie(); //default
         // CompTrie(char term, node* root); //initializes Trie with given root node
         // CompTrie(char term, str raw_text[]); //initializes Trie with array of words
+        std::shared_ptr<compResult> compareLabel(std::shared_ptr<LLNode> target_node, std::string target_label);
+        ~CompTrie(); //default
     private:
         //functions
-        std::shared_ptr<compResult> compareLabel(std::shared_ptr<LLNode> target_node, std::string target_label);
             //compares target_label to label @ target_node
         //destructors
-        ~CompTrie();//default
 };

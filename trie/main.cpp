@@ -10,8 +10,8 @@ LLNode* initNodes();
 
 int main()
 {
-    LLNode* root = initNodes();
-    snode st = root->child1;
+    // LLNode* root = initNodes();
+    // snode st = root->child1;
 
     //find place newnode should be placed at
 }
