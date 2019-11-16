@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<fstream>
+#include <chrono>
 
 using namespace std;
 
@@ -247,10 +248,14 @@ int main()
     }
     input.close();
     input.open("words.txt");
+    auto start = std::chrono::high_resolution_clock::now();
     while(input >> word)
     {
         trie->search(word);
     }
     input.close();
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    cout << "Linked list performance for search: " << microseconds << " micro-sec" << endl;
     return 0;
 }
