@@ -1,16 +1,17 @@
 #pragma once
-#include <memory>
-#include <string>
+#include "llnode.h"
+// #include <string> //included in llnode.h
+// #include <memory>   //included in llndoe.h
 /*FILL_LATER*/
 
-using str = std::string;
 
 enum CompCase
 {//restrict possible cases of compResult
     CaseSubstr,     //the target_label is a substring of the node_label
     CaseDiv,        //the target_word diverges from the label @ i
     CaseSuperstr,   //the target_word is a superstring of the label (label diverges from target_word @ i)
-    CaseInTrie      //the exact target_word is in the trie
+    CaseInTrie,      //the exact target_word is in the trie
+    NoCase          //state for default constructor
 };
 
 struct compResult
@@ -23,10 +24,9 @@ struct compResult
 class Insertable
 {//insert interface for CompTrie classes
     //functions
-    virtual void* insert() = 0; //virtual function forcing subclasses to implement
-    virtual void add() = 0; //virtual function forcing subclasses to implement
-    virtual void edit() = 0; //virtual function forcing subclasses to implement
-    virtual compResult compareLabel() = 0; //virtual function forcing subclasses to implement
+    // virtual void* insert() = 0; //virtual function forcing subclasses to implement
+    // virtual void add() = 0; //virtual function forcing subclasses to implement
+    // virtual void edit() = 0; //virtual function forcing subclasses to implement
 };
 
 class CompTrie : public Insertable
@@ -40,8 +40,8 @@ class CompTrie : public Insertable
         // CompTrie(char term, str raw_text[]); //initializes Trie with array of words
     private:
         //functions
-        compResult compareLabel();
+        std::shared_ptr<compResult> compareLabel(std::shared_ptr<LLNode> target_node, std::string target_label);
             //compares target_label to label @ target_node
         //destructors
         // ~CompTrie();//default
-}
+};
