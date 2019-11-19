@@ -244,12 +244,12 @@ int main()
     myTrie= new TrieLL;
     string word;
     ifstream data;
-    data.open("C:\\Users\\Djizi\\OneDrive\\Desktop\\LSU FALL 2019\\Advanced Algorithms\\HW\\HW3\\trieWords.txt");
+    data.open("WORD.LST");
     while(data >> word)
         myTrie->insert(word);
     data.close();
 
-      data.open("C:\\Users\\Djizi\\OneDrive\\Desktop\\LSU FALL 2019\\Advanced Algorithms\\HW\\HW3\\trieWords.txt");
+      data.open("WORD.LST");
     while(data >> word)
         myTrie->search(word);
     data.close();

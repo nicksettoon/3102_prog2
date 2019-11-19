@@ -38,26 +38,6 @@ LLNode::LLNode(str word_in, bool e_o_w)
 //     child1 = child_1;
 // }
 
-snode LLNode::findHead(char target_head)
-{//returns ptr to the sibling of this node instance or the instance itself if its head equals the target_head
-    /*FILL*/
-    printf("Finding head from starting node: \t");
-    this->print();
-    if(this->head == target_head)
-        return std::shared_ptr<LLNode>(this);
-
-    snode targetnode = this->rightsib;  //FIX LATER//
-    while(targetnode->head <= target_head)
-    {//while the current node's head  
-        if(targetnode->head == target_head) //if a child is found with the desired starting character
-            return targetnode;  //return that node
-        else //move the target node to the next sibling in the chain
-            targetnode = targetnode->rightsib;
-    }
-    printf("Could not find node with that head in the sibling list.\n");
-    return targetnode->leftsib; //send by node to the left of where the node should be.
-}
-
 void LLNode::print()
 {//prints a single node
     str eow = this->eow == 1 ? "yes" : "no";
@@ -70,10 +50,11 @@ void LLNode::printSibs()
     this->print();
     snode targetnode;
     targetnode = this->rightsib;
-    // std::cout << targetnode.use_count() << std::endl;
+    // std::cout << "rightsib: " <<targetnode->head <<targetnode->label<<std::endl;
 
     while(targetnode != nullptr)
     {//while the end of the sibling chain hasn't bee reached.
+        // printf("targetnode != nullptr\n");
         targetnode->print();
         targetnode = targetnode->rightsib;
         // std::cout << targetnode.use_count() << std::endl;
@@ -101,6 +82,6 @@ LLNode::~LLNode()
     printf("\nDeleting node: \n");
     this->print();
     printf("\n");
-    // this->leftsib->rightsib = this->rightsib;
-    // this->rightsib->leftsib = this->leftsib;
+    this->leftsib->rightsib = this->rightsib;
+    this->rightsib->leftsib = this->leftsib;
 }

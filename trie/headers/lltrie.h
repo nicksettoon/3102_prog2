@@ -14,6 +14,7 @@ struct searchStack
     std::shared_ptr<compResult> result; //last result of compareLabel()
     //constructors
     searchStack(std::string target_word, std::shared_ptr<LLNode> child_1);  //constructor
+    void print();
     ~searchStack();
 };
 
@@ -35,7 +36,7 @@ class LLCompTrie : public CompTrie::CompTrie
     private:
         //functions
         std::shared_ptr<searchStack> searchTrie(std::shared_ptr<searchStack> stack_in); //recursive search function
-        void add(std::shared_ptr<LLNode> in_node, std::shared_ptr<LLNode> neighbor, bool child);  //actually creates and adds a node
+        std::shared_ptr<LLNode> add(std::shared_ptr<LLNode> in_node, std::shared_ptr<LLNode> neighbor, bool child);  //actually creates and adds a node
         std::shared_ptr<searchStack> evalCase(std::shared_ptr<searchStack> stack_in);
         bool insertCase(std::shared_ptr<searchStack> stack_in);
 };

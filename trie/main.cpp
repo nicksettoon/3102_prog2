@@ -17,20 +17,25 @@ int main()
     trie.insert("bad");
 
     trie.insert("cadet");
+    trie.root->child1->printSibs();
     trie.insert("add");
-    trie.insert("bat");
-    trie.insert("babbage");
-    trie.insert("batter");
+    trie.root->child1->printSibs();
+    // trie.insert("bat");
+    // trie.root->child1->printSibs();
+    // trie.insert("babbage");
+    // trie.root->child1->printSibs();
+    // trie.insert("batter");
+    // trie.root->child1->printSibs();
 
-    trie.search("bad");
-    trie.search("cadet");
-    trie.search("add");
-    trie.search("bat");
-    trie.search("babbage");
-    trie.search("batter");
-    trie.search("adder");
+    // trie.search("bad");
+    // trie.search("cadet");
+    // trie.search("add");
+    // trie.search("bat");
+    // trie.search("babbage");
+    // trie.search("batter");
+    // trie.search("adder");
 
-    std::cin.get();
+    // std::cin.get();
     //find place newnode should be placed at
 }
 
