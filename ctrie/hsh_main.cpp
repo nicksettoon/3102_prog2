@@ -1,4 +1,4 @@
-#include "hshtrie.h"
+#include "headers/hsh_trie.h"
 // #include <string> //included in node.h
 // #include <iostream> //included in node.h
 // #include <stdio.h> //included in node.h
@@ -12,8 +12,8 @@ int main()
 
     //open file
     //instantiate hashtrie
-    // HashTrie* trie = new HashTrie(50);
-    
+    HashTrie trie;
+    trie.size = 1000;
     //insert into trie
     //search trie for random inserts
     //print time 

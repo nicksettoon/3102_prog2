@@ -1,7 +1,8 @@
-#include "linkedlist.h"
+#include "headers/ll_trie.h"
 
 using str = std::string;
 
+//not needed nemore
 // LLNode* LinkedList::newNode(char letter, str label, bool isWord, LLNode * firstChild, LLNode *rightSibling)
 // {
 //     LLNode *newNode;
@@ -13,6 +14,25 @@ using str = std::string;
 //     newNode->isWord = isWord;
 //     return newNode;
 // }
+
+void LinkedList::getNodes(LinkedList::nodeVisitFunc visit_func, LLNode* start_node, str prefix_context, HashTrie* target_trie)
+{//traverses the trie in preorder and prints each complete word.
+    if(start_node == nullptr){return;}
+
+    str prefix = prefix_context + start_node->label;
+
+    if(start_node->isWord)
+        visit_func(prefix);
+        // target_trie->insert(prefix);
+        // std::cout << prefix << std::endl;
+
+    LLNode* nextnode = start_node->firstChild;
+    while(nextnode != nullptr)
+    {
+        getNodes(nextnode, prefix);
+        nextnode = nextnode->rightSibling;
+    }
+}
 
 str LinkedList::findSubstring(int i, int j, str word)
 {
