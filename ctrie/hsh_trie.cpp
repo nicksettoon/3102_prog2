@@ -28,8 +28,11 @@ HshEdge::HshEdge(LLNode* parent_in, LLNode* child_in) //base constructor
 //     typedef int(*hashFunc)(int parent_addr, char child_head);
 
 HashTrie::HashTrie(int size_in)
-    : size(size_in) {/*full constructor*/ hshtable[size];}
-
+    : size(size_in)
+    {//full constructor//
+        hshtable[size];
+    }
+    
                 //MEMBER FUNCTIONS//
 //-----------------------HshEdge----------------------------//
 void HshEdge::print()
@@ -68,8 +71,11 @@ Edge* HshEdge::searchList(LLNode* target_parent, char target_childhead)
 }
  
 //-----------------------HashTrie----------------------------//
-bool Hashtrie::search(str target_word)
+bool HashTrie::search(str target_word)
 {
+    this->root;
+    parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+
     LLNode *rootchild = root->firstChild;
     if(rootchild == nullptr) //empty trie
     {
@@ -108,11 +114,28 @@ bool Hashtrie::search(str target_word)
     }
 }
 
+int HashTrie::getHash(int parent_addr, char head_in)
+{//small abstraction for hash function so I don't have to remember the special syntax everytime
+    return (this->*hash)(parent_addr, head_in);
+}
+
 bool HashTrie::insert(LLNode* parent_in, LLNode* child_in)
 {//insert function, uses this->hash()
     //make edge
-    Edge* newedge = new Edge(parent_in, child_in);
-    int parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+    int parentaddr;
+    Edge* newedge;
+
+    if(parent_in != nullptr)
+    {
+        newedge = new Edge(parent_in, child_in);
+        parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+    }
+    else
+    {
+        this->root = child_in;
+        parentaddr =  this->size;
+    }
+
     int hashresult = (this->*hash)(parentaddr, child_in->letter);
 
     if (this->hshtable[hashresult] != NULL)
@@ -132,17 +155,16 @@ void HashTrie::setHash(Hash desired_hash)
 {//sets the HashTrie's hash function to one of the defined options in the Hashes enum
     std::cout << "Setting hash function to: " << desired_hash << std::endl;
 
-    this->hash = &HashTrie::primeHash;
-    // switch (desired_hash)
-    // {
-    // case prime:
-    //     this->hash = primeHash;
-    //     break;
+    switch (desired_hash)
+    {
+    case prime:
+        this->hash = &HashTrie::primeHash;
+        break;
     
-    // default:
-    //     this->hash = primeHash;
-    //     break;
-    // }
+    default:
+        this->hash = &HashTrie::primeHash;
+        break;
+    }
 }
 
 // bool HashTrie::search(str word_in)

@@ -17,36 +17,37 @@ using str = std::string;
 //     newNode->isWord = isWord;
 //     return newNode;
 // }
-// void LinkedList::getNodes(auto visit_func, LLNode* parent_in, LLNode* current_node, str prefix_context)
-// {//traverses the trie in preorder giving each parent child relationship to the passed in function
-//     if(current_node == nullptr){return;}
+void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* current_node, str prefix_context)
+{//traverses the trie in preorder giving each parent child relationship to the HashTrie insert function
+    if(current_node == nullptr){return;}
+    
+    str prefix = prefix_context + current_node->label;
+    // if(start_node->isWord){}
+    // if((visit_func == LinkedList::printFunc) && (current_node->isWord))
+    // {//if the given function prints things and the node is the end of a word
+    //     visit_func(prefix); //print the word
+    // }
+    // else if (visit_func == HashTrie::)
+    // {//if the visit function inserts nodes elsewhere
+    //     visit_func(parent_in, current_node); //give it all the information needed to insert(
+    // }
+    target_hashtrie->insert(parent_in, current_node);
 
-//     str prefix = prefix_context + current_node->label;
-     
-//     if((visit_func == LinkedList::printFunc) && (current_node->isWord))
-//     {//if the given function prints things and the node is the end of a word
-//         visit_func(prefix); //print the word
-//     }
-//     else if (visit_func == HashTrie::)
-//     {//if the visit function inserts nodes elsewhere
-//         visit_func(parent_in, current_node); //give it all the information needed to insert(
-//     }
+    LLNode* nextnode = current_node->firstChild;
+    if (nextnode != nullptr)
+    {
+        LLNode* parentout = current_node;
+        getNodes(target_hashtrie, parentout, nextnode, prefix);
+    }
+    else
+        nextnode = nextnode->rightSibling;
 
-//     LLNode* nextnode = current_node->firstChild;
-//     if (nextnode != nullptr)
-//     {
-//         LLNode* parentout = current_node;
-//         getNodes(visit_func, parentout, nextnode, prefix);
-//     }
-//     else
-//         nextnode = nextnode->rightSibling;
-
-//     while(nextnode != nullptr)
-//     {
-//         getNodes(visit_func, parent_in, nextnode, prefix);
-//         nextnode = nextnode->rightSibling;
-//     }
-// }
+    while(nextnode != nullptr)
+    {
+        getNodes(target_hashtrie, parent_in, nextnode, prefix);
+        nextnode = nextnode->rightSibling;
+    }
+}
 // {//traverses the trie in preorder and prints each complete word.
 //     if(start_node == nullptr){return;}
 

@@ -39,6 +39,7 @@ public:
     bool insert(LLNode* parent_in, LLNode* child_in);  //insert function
     bool search(std::string word_in);  //search function, uses hash()
     void setHash(Hashes);
+    int getHash(int, char)
     // void getNodes(LLNode* start_node, std::string prefix_context);
 private:
     int (HashTrie::*hash)(int, char);
