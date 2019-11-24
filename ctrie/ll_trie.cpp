@@ -19,7 +19,7 @@ void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* 
         getNodes(target_hashtrie, parentout, nextnode, prefix);
     }
     else
-        nextnode = nextnode->rightSibling;
+        nextnode = current_node->rightSibling;
 
     while(nextnode != nullptr)
     {
@@ -46,18 +46,18 @@ str LinkedList::findSubstring(int i, int j, str word)
 
 void LinkedList::insert(str word)
 {
-    std::cout << "Inserting " << word << " into trie" << std::endl;
+    // std::cout << "Inserting " << word << " into trie" << std::endl;
 
     if(root->firstChild == nullptr) //trie empty, insert first word
     {
-        std::cout << "Trie empty" << std::endl;
+        // std::cout << "Trie empty" << std::endl;
         LLNode * node = new LLNode(word[0], word, false, nullptr, nullptr);
         root->firstChild = node;
         return;
     }
     else //trie not empty, find where to insert
     {
-        std::cout << "Trie not empty" << std::endl;
+        // std::cout << "Trie not empty" << std::endl;
         int i = 0;
         bool done = false;
         LLNode *rootchild = root->firstChild;
@@ -179,7 +179,7 @@ void LinkedList::insert(str word)
 
             }
         }
-        std::cout << "Inserted." << std::endl;
+        // std::cout << "Inserted." << std::endl;
     }
 }
 

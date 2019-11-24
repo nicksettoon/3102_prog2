@@ -27,10 +27,11 @@ HshEdge::HshEdge(LLNode* parent_in, LLNode* child_in) //base constructor
 //     LLNode* root;
 //     typedef int(*hashFunc)(int parent_addr, char child_head);
 
-HashTrie::HashTrie(int size_in)
+HashTrie::HashTrie(int size_in, HashTrie::Hashes hash_type)
     : size(size_in)
     {//full constructor//
-        hshtable[size];
+        hshtable.resize(this->size);
+        this->setHash(hash_type);
     }
     
                 //MEMBER FUNCTIONS//

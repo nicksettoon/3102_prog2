@@ -6,6 +6,7 @@
 #include "headers/hsh_trie.h"
 
 using str = std::string;
+using Hash = HashTrie::Hashes;
 
 int main()
 {
@@ -23,20 +24,21 @@ int main()
     }
     std::cout << count << std::endl;
     input.close();
-    
-    // HashTrie* hshtrie = new HashTrie(count+1); tr
-//    ie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
 
-    input.open("words.txt");
-    auto start = std::chrono::high_resolution_clock::now();
-    while(input >> word)
-    {
-        trie->search(word);
-    }
-    input.close();
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
+    Hash hashtype = Hash::prime; 
+    HashTrie* hshtrie = new HashTrie(1009, hashtype);
+    trie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
+
+    // input.open("words.txt");
+    // auto start = std::chrono::high_resolution_clock::now();
+    // while(input >> word)
+    // {
+    //     trie->search(word);
+    // }
+    // input.close();
+    // auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    // long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    // std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
 
     return 0;
 }

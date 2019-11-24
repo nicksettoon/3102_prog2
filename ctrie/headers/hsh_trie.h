@@ -5,7 +5,6 @@
 // #include <iostream> //included in node.h
 // #include <stdio.h> //included in node.h
 // #include <memory> //included in node.h
-#include "hsh_node.h"
 #include "ll_node.h"
 
 struct HshEdge
@@ -24,17 +23,13 @@ struct HshEdge
 class HashTrie
 {
 public:
-    HashTrie(int size_in); //basic constructor
     const int size;   //size of the hash table
     std::vector<HshEdge*> hshtable; //array of HashEntries
     LLNode* root;
-    typedef void(*insertFunc)(LLNode*, LLNode*);
-    // typedef int(*hashFunc)(int parent_addr, char child_head);
-
     //enum for hashes
-    enum Hashes{
-        prime
-    };
+    enum Hashes{ prime };
+    HashTrie(int size_in, HashTrie::Hashes hash_type); //basic constructor
+
     //member functions
     bool insert(LLNode* parent_in, LLNode* child_in);  //insert function
     // bool search(std::string word_in);  //search function, uses hash()
@@ -47,7 +42,10 @@ private:
     int primeHash(int parent_addr, char child_head)
     {//hash function to find child with given child_head
         int b = 5;
-        return ((parent_addr * child_head * (int)std::pow(b,31)) % 10007);
+        unsigned int power = (int)std::pow(b,31);
+        // power = power & 0x7FFFFFFF;
+        int result = ((parent_addr + (int)child_head * power) % this->size);
+        return result;
     }
 };
 
