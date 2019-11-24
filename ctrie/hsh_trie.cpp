@@ -77,48 +77,50 @@ HshEdge* HashTrie::getEdge(LLNode* parent_in, LLNode* child_in)
     return this->hshtable[hash];
 }
 
-bool HashTrie::search(str target_word)
-{
-    Edge* target_edge = getEdge(this->root, this->root->letter);
-    target_edge->searchList(this->root, this->root->letter);
-    
-    if(target_edge->child == nullptr) //empty trie
-    {
-        return;
-    }
-    else //not empty trie, start search
-    {
-        }
-        int i = 0;
-            while(rootchild != nullptr && rootchild->letter < target_word[i])
-            {
-                rootchild = rootchild->rightSibling; //continue through level
-            }
-            if(rootchild == nullptr) //reached end, not found
-            {
-                std::cout << target_word << " is not found " << std::endl;
-                return;
-            }
-            else //continue search
-            {
-                i++;
-                bool found = false;
-                while(!found && i < rootchild->label.length())
-                {
-                    if(target_word[i] == rootchild->label[i]) //still matching, continue
-                    {
-                        i++;
-                    }
-                    else
-                    {
-                         rootchild = rootchild->firstChild; //next level
-                         found = true;
-                    }
-                }
-            }
-        std::cout << target_word << " found." << std::endl;
-    }
-}
+// bool HashTrie::search(str target_word)
+// {
+//     Edge* target_edge = getEdge(this->root, this->root->letter);
+//     target_edge = target_edge->searchList(this->root, this->root->letter);
+//     if (target_edge == nullptr)
+//     {
+//         return 0;
+//     }
+//     if(target_edge->child == nullptr) //empty trie
+//     {
+//         return;
+//     }
+//     else //not empty trie, start search
+//     {
+//         int i = 0;
+//             while(rootchild != nullptr && rootchild->letter < target_word[i])
+//             {
+//                 rootchild = rootchild->rightSibling; //continue through level
+//             }
+//             if(rootchild == nullptr) //reached end, not found
+//             {
+//                 std::cout << target_word << " is not found " << std::endl;
+//                 return;
+//             }
+//             else //continue search
+//             {
+//                 i++;
+//                 bool found = false;
+//                 while(!found && i < rootchild->label.length())
+//                 {
+//                     if(target_word[i] == rootchild->label[i]) //still matching, continue
+//                     {
+//                         i++;
+//                     }
+//                     else
+//                     {
+//                          rootchild = rootchild->firstChild; //next level
+//                          found = true;
+//                     }
+//                 }
+//             }
+//         std::cout << target_word << " found." << std::endl;
+//     }
+// }
 
 int HashTrie::getHash(LLNode* parent_in, char head_in)
 {//small abstraction for hash function so I don't have to remember the special syntax everytime

@@ -7,20 +7,6 @@
 
 using str = std::string;
 
-void testTrie(auto* trie_in)
-{
-    input.open("words.txt");
-    auto start = std::chrono::high_resolution_clock::now();
-    while(input >> word)
-    {
-        trie_in->search(word);
-    }
-    input.close();
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
-}
-
 int main()
 {
 
@@ -38,11 +24,19 @@ int main()
     std::cout << count << std::endl;
     input.close();
     
-    HashTrie hshtrie = new HashTrie(count);
+    HashTrie* hshtrie = new HashTrie(count);
+    trie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
 
-    trie->getNodes(hshtrie, trie->root, trie->root->label);
-
-    testTrie(trie);
-    testTrie(hshtrie);
+    input.open("words.txt");
+    auto start = std::chrono::high_resolution_clock::now();
+    while(input >> word)
+    {
+        trie->search(word);
+    }
+    input.close();
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
+    
     return 0;
 }

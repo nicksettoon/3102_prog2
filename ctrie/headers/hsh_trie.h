@@ -37,9 +37,9 @@ public:
     };
     //member functions
     bool insert(LLNode* parent_in, LLNode* child_in);  //insert function
-    bool search(std::string word_in);  //search function, uses hash()
+    // bool search(std::string word_in);  //search function, uses hash()
     void setHash(Hashes);
-    int getHash(int, char);
+    int getHash(LLNode*, char);
     HshEdge* getEdge(LLNode* parent_in, LLNode* child_in);
     // void getNodes(LLNode* start_node, std::string prefix_context);
 private:
