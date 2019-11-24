@@ -1,46 +1,42 @@
-#include<iostream>
-#include<string>
-#include<fstream>
-#include <chrono>
+#include "headers/ll_trie.h"
 
-using namespace std;
+using str = std::string;
 
-struct Node
-{
-    char letter; //first character
-    string label; //word
-    bool isWord; //if this node is a word or not
-    Node * firstChild; //child of parent
-    Node * rightSibling; //siblings of first child
-};
+//not needed nemore
+// LLNode* LinkedList::newNode(char letter, str label, bool isWord, LLNode * firstChild, LLNode *rightSibling)
+// {
+//     LLNode *newNode;
+//     newNode = new LLNode;
+//     newNode->letter = letter;
+//     newNode->label = label;
+//     newNode->firstChild = firstChild;
+//     newNode->rightSibling = rightSibling;
+//     newNode->isWord = isWord;
+//     return newNode;
+// }
 
-class LinkedList
-{
-private:
-    Node * root;
-    Node * newNode(char, string, bool, Node *, Node *);
-    string findSubstring(int, int, string);
-public:
-    LinkedList(); //constructor
-    void insert(string);
-    void search(string);
-};
+void LinkedList::getNodes(LinkedList::nodeVisitFunc visit_func, LLNode* start_node, str prefix_context, HashTrie* target_trie)
+{//traverses the trie in preorder and prints each complete word.
+    if(start_node == nullptr){return;}
 
-Node* LinkedList::newNode(char letter, string label, bool isWord, Node * firstChild, Node *rightSibling)
-{
-    Node *newNode;
-    newNode = new Node;
-    newNode->letter = letter;
-    newNode->label = label;
-    newNode->firstChild = firstChild;
-    newNode->rightSibling = rightSibling;
-    newNode->isWord = isWord;
-    return newNode;
+    str prefix = prefix_context + start_node->label;
+
+    if(start_node->isWord)
+        visit_func(prefix);
+        // target_trie->insert(prefix);
+        // std::cout << prefix << std::endl;
+
+    LLNode* nextnode = start_node->firstChild;
+    while(nextnode != nullptr)
+    {
+        getNodes(nextnode, prefix);
+        nextnode = nextnode->rightSibling;
+    }
 }
 
-string LinkedList::findSubstring(int i, int j, string word)
+str LinkedList::findSubstring(int i, int j, str word)
 {
-    string substring;
+    str substring;
     if(i == j)
         substring = word[i];
     else
@@ -51,27 +47,28 @@ string LinkedList::findSubstring(int i, int j, string word)
 
 LinkedList::LinkedList() //constructor
 {
-    root = newNode('$', "", false, nullptr, nullptr);
+    root = new LLNode('$', "", false, nullptr, nullptr);
 }
 
-void LinkedList::insert(string word)
+void LinkedList::insert(str word)
 {
-    cout << "Inserting " << word << " into trie" << endl;
+    std::cout << "Inserting " << word << " into trie" << std::endl;
+
     if(root->firstChild == nullptr) //trie empty, insert first word
     {
-        cout << "Trie empty" << endl;
-        Node * node = newNode(word[0], word, false, nullptr, nullptr);
+        std::cout << "Trie empty" << std::endl;
+        LLNode * node = new LLNode(word[0], word, false, nullptr, nullptr);
         root->firstChild = node;
         return;
     }
     else //trie not empty, find where to insert
     {
-        cout << "Trie not empty" << endl;
+        std::cout << "Trie not empty" << std::endl;
         int i = 0;
         bool done = false;
-        Node *rootchild = root->firstChild;
-        Node *prevNode = nullptr;
-        Node *parent = root;
+        LLNode *rootchild = root->firstChild;
+        LLNode *prevNode = nullptr;
+        LLNode *parent = root;
         while(!done)
         {
             while(rootchild != nullptr && rootchild->label[i] < word[i]) //check char
@@ -96,9 +93,9 @@ void LinkedList::insert(string word)
                 }
                 if(stop)
                 {
-                    string firstChildLabel;
-                    string rightSiblingLabel;
-                    string newLabel = findSubstring(0, i - 1, rootchild->label); //find substring
+                    str firstChildLabel;
+                    str rightSiblingLabel;
+                    str newLabel = findSubstring(0, i - 1, rootchild->label); //find substring
                     bool add = false; //bool add
                     if(rootchild->label[i] > word[i])
                     {
@@ -113,8 +110,8 @@ void LinkedList::insert(string word)
                     }
                     rootchild->isWord = false;
                     rootchild->label = newLabel; //new label for split case
-                    Node *rightSib = newNode(rightSiblingLabel[0], rightSiblingLabel, true, nullptr, nullptr);
-                    Node *leftChild = newNode(firstChildLabel[0], firstChildLabel, true, nullptr, rightSib);
+                    LLNode *rightSib = new LLNode(rightSiblingLabel[0], rightSiblingLabel, true, nullptr, nullptr);
+                    LLNode *leftChild = new LLNode(firstChildLabel[0], firstChildLabel, true, nullptr, rightSib);
                     if(rootchild->firstChild == nullptr)
                     {
                         rootchild->firstChild = leftChild;
@@ -149,8 +146,8 @@ void LinkedList::insert(string word)
                        }
                        else //make new node to be child for rootchild
                        {
-                           string childLabel = findSubstring(i, word.length() - 1, word);
-                           Node *newChild = newNode(childLabel[0], childLabel, true, nullptr, nullptr);
+                           str childLabel = findSubstring(i, word.length() - 1, word);
+                           LLNode *newChild = new LLNode(childLabel[0], childLabel, true, nullptr, nullptr);
                            rootchild->firstChild = newChild;
                            done = true;
                        }
@@ -162,10 +159,10 @@ void LinkedList::insert(string word)
                     }
                     else
                     {
-                        string newChildLabel = findSubstring(i, rootchild->label.length() - 1, rootchild->label);
+                        str newChildLabel = findSubstring(i, rootchild->label.length() - 1, rootchild->label);
                         rootchild->label = findSubstring(0, rootchild->label.length() - 1, rootchild->label);
                         rootchild->isWord = true; //set to true
-                        Node * node = newNode(newChildLabel[0], newChildLabel, true, rootchild->firstChild, nullptr);
+                        LLNode * node = new LLNode(newChildLabel[0], newChildLabel, true, rootchild->firstChild, nullptr);
                         rootchild->firstChild = node;
                         done = true;
                     }
@@ -175,26 +172,26 @@ void LinkedList::insert(string word)
             {
                 if(prevNode == nullptr) //new level, make firstChild of level
                 {
-                    Node* node = newNode(word[i], word, true, nullptr, rootchild);
+                    LLNode* node = new LLNode(word[i], word, true, nullptr, rootchild);
                     parent->firstChild = node;
                     done = true;
                 }
                 else //make to be rightSibling
                 {
-                    Node * node = newNode(word[0], word, true, nullptr, rootchild);
+                    LLNode * node = new LLNode(word[0], word, true, nullptr, rootchild);
                     prevNode->rightSibling = node;
                     done = true;
                 }
 
             }
         }
-        cout << "Inserted." << endl;
+        std::cout << "Inserted." << std::endl;
     }
 }
 
-void LinkedList::search(string word)
+void LinkedList::search(str word)
 {
-    Node *rootchild = root->firstChild;
+    LLNode *rootchild = root->firstChild;
     if(rootchild == nullptr) //empty trie
     {
         return;
@@ -208,7 +205,7 @@ void LinkedList::search(string word)
             }
             if(rootchild == nullptr) //reached end, not found
             {
-                cout << word << " is not found " << endl;
+                std::cout << word << " is not found " << std::endl;
                 return;
             }
             else //continue search
@@ -228,34 +225,6 @@ void LinkedList::search(string word)
                     }
                 }
             }
-        cout << word << " found." << endl;
+        std::cout << word << " found." << std::endl;
     }
-}
-
-
-
-
-int main()
-{
-    LinkedList * trie;
-    trie = new LinkedList;
-    ifstream input;
-    string word;
-    input.open("words.txt");
-    while (input >> word)
-    {
-        trie->insert(word);
-    }
-    input.close();
-    input.open("words.txt");
-    auto start = std::chrono::high_resolution_clock::now();
-    while(input >> word)
-    {
-        trie->search(word);
-    }
-    input.close();
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    cout << "Linked list performance for search: " << microseconds << " micro-sec" << endl;
-    return 0;
 }
