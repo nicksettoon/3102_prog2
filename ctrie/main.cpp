@@ -29,6 +29,7 @@ int main()
     std::ifstream input;
     str word;
     input.open("words.txt");
+    int count;
     while (input >> word)
     {
         trie->insert(word);
