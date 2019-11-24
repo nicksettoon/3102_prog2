@@ -71,18 +71,32 @@ Edge* HshEdge::searchList(LLNode* target_parent, char target_childhead)
 }
  
 //-----------------------HashTrie----------------------------//
+LLNode* getChild(LLNode* parent_in, LLNode* child_in)
+{
+    int hash = getHash(parent_in, child_in->letter);
+    Edge* edge = this->hshtable[hash];
+    return edge->child;
+}
+
 bool HashTrie::search(str target_word)
 {
-    this->root;
-    parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+    LLNode* target_node = getChild(this->root, this->root->letter);
 
-    LLNode *rootchild = root->firstChild;
-    if(rootchild == nullptr) //empty trie
+    if(target_node == nullptr) //empty trie
     {
         return;
     }
-    else //not empty trie, start searcg
+    else //not empty trie, start search
     {
+        target_node = getChild();
+
+        while(target_node != nullptr && !( target_node-> == parent && target_node->char == c)) target_node=target_node->next;
+
+        if (target_node== null) return null;
+
+        return target_node->child;
+
+        }
         int i = 0;
             while(rootchild != nullptr && rootchild->letter < target_word[i])
             {
@@ -114,29 +128,30 @@ bool HashTrie::search(str target_word)
     }
 }
 
-int HashTrie::getHash(int parent_addr, char head_in)
+int HashTrie::getHash(LLNode* parent_in, char head_in)
 {//small abstraction for hash function so I don't have to remember the special syntax everytime
-    return (this->*hash)(parent_addr, head_in);
+    int parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+    return (this->*hash)(parentaddr, head_in);
 }
 
 bool HashTrie::insert(LLNode* parent_in, LLNode* child_in)
 {//insert function, uses this->hash()
     //make edge
-    int parentaddr;
     Edge* newedge;
+    int hashresult;
 
     if(parent_in != nullptr)
     {
         newedge = new Edge(parent_in, child_in);
-        parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
+        hashresult = getHash(parent_in, child_in->letter);
     }
     else
     {
         this->root = child_in;
-        parentaddr =  this->size;
+        newedge = new Edge(child_in, child_in);
+        hashresult = getHash(this->root, child_in->letter);
     }
 
-    int hashresult = (this->*hash)(parentaddr, child_in->letter);
 
     if (this->hshtable[hashresult] != NULL)
     {

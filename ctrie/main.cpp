@@ -22,11 +22,12 @@ int main()
     while (input >> word)
     {
         trie->insert(word);
+        count++;
     }
+    std::cout << count << std::endl;
     input.close();
     
-    // LinkedList::printFunc printit = printFunc;
-    // HashTrie::insertFunc insertHash = HashTrie::insert;
+    // HashTrie hshtrie();
     // trie->getNodes(insertHash, trie->root, "");
 
     // input.open("words.txt");
