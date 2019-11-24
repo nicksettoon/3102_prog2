@@ -8,14 +8,14 @@
 using str = std::string;
 using Edge = HshEdge;
 
-int main()
-{//main function
+// int main()
+// {//main function
 
     //open file
     //instantiate hashtrie
-    HashTrie trie(1000);
+    // HashTrie trie(1000);
     
     //insert into trie
     //search trie for random inserts
     //print time 
-}
+// }

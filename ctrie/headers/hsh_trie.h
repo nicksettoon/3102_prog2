@@ -1,22 +1,23 @@
 #pragma once
-#include "hsh_node.h"
 #include <vector>
 #include <math.h>
 // #include <string> //included in node.h
 // #include <iostream> //included in node.h
 // #include <stdio.h> //included in node.h
 // #include <memory> //included in node.h
+#include "hsh_node.h"
+#include "ll_node.h"
 
 struct HshEdge
 {//struct holding the details of the relationship between two HshNodes in a HashTrie
-    HshNode* parent;   //pointer to parent of relationship
-    HshNode* child;    //pointer to child of relationship
+    LLNode* parent;   //pointer to parent of relationship
+    LLNode* child;    //pointer to child of relationship
     char childhead;         //head of child node
     HshEdge* nextedge; //pointer to next entry in the HshEdge's linked list.
 
-    HshEdge(HshNode* parent_in, HshNode* child_in); //base constructor
-    // HshEdge(HshEdge* predecessor_in, HshNode* parent_in, char head_in, HshNode* child_in); //full constructor unnecessary
-    HshEdge* searchList(HshNode* target_parent, char target_childhead);    
+    //member functions 
+    HshEdge(LLNode* parent_in, LLNode* child_in); //base constructor
+    HshEdge* searchList(LLNode* target_parent, char target_childhead);    
     void print(); //prints HshEdge's information
 };
 
@@ -25,15 +26,23 @@ class HashTrie
 public:
     HashTrie(int size_in); //basic constructor
     const int size;   //size of the hash table
-    std::vector<HshEdge> hshtable; //array of HashEntries
-    HshNode* root;
-    typedef int(*hashFunc)(int parent_addr, char child_head);
+    std::vector<HshEdge*> hshtable; //array of HashEntries
+    LLNode* root;
+    typedef void(*insertFunc)(LLNode*, LLNode*);
+    // typedef int(*hashFunc)(int parent_addr, char child_head);
 
-    bool insert(hashFunc hash_func, std::string word_in);  //insert function
+    //enum for hashes
+    enum Hashes{
+        prime
+    };
+    //member functions
+    bool insert(LLNode* parent_in, LLNode* child_in);  //insert function
     bool search(std::string word_in);  //search function, uses hash()
-    
+    void setHash(Hashes);
+    // void getNodes(LLNode* start_node, std::string prefix_context);
 private:
-    int hash1(int parent_addr, char child_head)
+    int (HashTrie::*hash)(int, char);
+    int primeHash(int parent_addr, char child_head)
     {//hash function to find child with given child_head
         int b = 5;
         return ((parent_addr * child_head * (int)std::pow(b,31)) % 10007);
