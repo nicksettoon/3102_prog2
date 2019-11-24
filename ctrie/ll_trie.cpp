@@ -5,18 +5,6 @@
 
 using str = std::string;
 
-//not needed nemore
-// LLNode* LinkedList::newNode(char letter, str label, bool isWord, LLNode * firstChild, LLNode *rightSibling)
-// {
-//     LLNode *newNode;
-//     newNode = new LLNode;
-//     newNode->letter = letter;
-//     newNode->label = label;
-//     newNode->firstChild = firstChild;
-//     newNode->rightSibling = rightSibling;
-//     newNode->isWord = isWord;
-//     return newNode;
-// }
 void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* current_node, str prefix_context)
 {//traverses the trie in preorder giving each parent child relationship to the HashTrie insert function
     if(current_node == nullptr){return;}
@@ -48,21 +36,6 @@ void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* 
         nextnode = nextnode->rightSibling;
     }
 }
-// {//traverses the trie in preorder and prints each complete word.
-//     if(start_node == nullptr){return;}
-
-//     str prefix = prefix_context + start_node->label;
-
-//     if(start_node->isWord)
-//         visit_func(prefix);
-
-//     LLNode* nextnode = start_node->firstChild;
-//     while(nextnode != nullptr)
-//     {
-//         getNodes(visit_func, nextnode, prefix);
-//         nextnode = nextnode->rightSibling;
-//     }
-// }
 
 LinkedList::LinkedList() //constructor
 {

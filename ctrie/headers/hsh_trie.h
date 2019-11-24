@@ -40,6 +40,7 @@ public:
     bool search(std::string word_in);  //search function, uses hash()
     void setHash(Hashes);
     int getHash(int, char);
+    LLNode* getChild(LLNode* parent_in, LLNode* child_in);
     HshEdge* getEdge();
     // void getNodes(LLNode* start_node, std::string prefix_context);
 private:

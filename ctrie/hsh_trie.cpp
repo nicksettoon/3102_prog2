@@ -71,7 +71,7 @@ Edge* HshEdge::searchList(LLNode* target_parent, char target_childhead)
 }
  
 //-----------------------HashTrie----------------------------//
-LLNode* getChild(LLNode* parent_in, LLNode* child_in)
+LLNode* HashTrie::getChild(LLNode* parent_in, LLNode* child_in)
 {
     int hash = getHash(parent_in, child_in->letter);
     Edge* edge = this->hshtable[hash];

@@ -27,8 +27,9 @@ int main()
     std::cout << count << std::endl;
     input.close();
     
-    // HashTrie hshtrie();
-    // trie->getNodes(insertHash, trie->root, "");
+    HashTrie hshtrie = new HashTrie(count);
+
+    trie->getNodes(hshtrie, trie->root, trie->root->label);
 
     // input.open("words.txt");
     // auto start = std::chrono::high_resolution_clock::now();
