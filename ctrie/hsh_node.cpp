@@ -6,7 +6,7 @@
 
 using str = std::string;
 
-Node::Node(str word_in, bool e_o_w)
+HshNode::HshNode(str word_in, bool e_o_w)
 {//constructor
     head = word_in[0];
     label = word_in.substr(1);

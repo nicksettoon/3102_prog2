@@ -11,6 +11,7 @@
                 "${workspaceFolder}/${relativeFileDirname}",
                 "${fileBasename}",
                 "${fileBasenameNoExtension}",
+                "0"
             ],
             "group": {
                 "kind": "build",
