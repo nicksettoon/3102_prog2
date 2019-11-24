@@ -7,10 +7,20 @@
 
 using str = std::string;
 
-void printFunc(str string_in)
-{//prints one line with a single given string
-    std::cout << string_in << std::endl;
+void testTrie(auto* trie_in)
+{
+    input.open("words.txt");
+    auto start = std::chrono::high_resolution_clock::now();
+    while(input >> word)
+    {
+        trie_in->search(word);
+    }
+    input.close();
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
 }
+
 int main()
 {
 
@@ -31,15 +41,7 @@ int main()
 
     trie->getNodes(hshtrie, trie->root, trie->root->label);
 
-    // input.open("words.txt");
-    // auto start = std::chrono::high_resolution_clock::now();
-    // while(input >> word)
-    // {
-    //     trie->search(word);
-    // }
-    // input.close();
-    // auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    // long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    // std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
+    testTrie(trie);
+    testTrie(hshtrie);
     return 0;
 }

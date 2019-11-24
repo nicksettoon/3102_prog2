@@ -71,31 +71,23 @@ Edge* HshEdge::searchList(LLNode* target_parent, char target_childhead)
 }
  
 //-----------------------HashTrie----------------------------//
-LLNode* HashTrie::getChild(LLNode* parent_in, LLNode* child_in)
+HshEdge* HashTrie::getEdge(LLNode* parent_in, LLNode* child_in)
 {
     int hash = getHash(parent_in, child_in->letter);
-    Edge* edge = this->hshtable[hash];
-    return edge->child;
+    return this->hshtable[hash];
 }
 
 bool HashTrie::search(str target_word)
 {
-    LLNode* target_node = getChild(this->root, this->root->letter);
-
-    if(target_node == nullptr) //empty trie
+    Edge* target_edge = getEdge(this->root, this->root->letter);
+    target_edge->searchList(this->root, this->root->letter);
+    
+    if(target_edge->child == nullptr) //empty trie
     {
         return;
     }
     else //not empty trie, start search
     {
-        target_node = getChild();
-
-        while(target_node != nullptr && !( target_node-> == parent && target_node->char == c)) target_node=target_node->next;
-
-        if (target_node== null) return null;
-
-        return target_node->child;
-
         }
         int i = 0;
             while(rootchild != nullptr && rootchild->letter < target_word[i])

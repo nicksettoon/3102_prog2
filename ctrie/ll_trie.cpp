@@ -10,15 +10,6 @@ void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* 
     if(current_node == nullptr){return;}
     
     str prefix = prefix_context + current_node->label;
-    // if(start_node->isWord){}
-    // if((visit_func == LinkedList::printFunc) && (current_node->isWord))
-    // {//if the given function prints things and the node is the end of a word
-    //     visit_func(prefix); //print the word
-    // }
-    // else if (visit_func == HashTrie::)
-    // {//if the visit function inserts nodes elsewhere
-    //     visit_func(parent_in, current_node); //give it all the information needed to insert(
-    // }
     target_hashtrie->insert(parent_in, current_node);
 
     LLNode* nextnode = current_node->firstChild;
