@@ -24,8 +24,8 @@ int main()
     std::cout << count << std::endl;
     input.close();
     
-    HashTrie* hshtrie = new HashTrie(count);
-    trie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
+    // HashTrie* hshtrie = new HashTrie(count+1); tr
+//    ie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
 
     input.open("words.txt");
     auto start = std::chrono::high_resolution_clock::now();
@@ -37,6 +37,6 @@ int main()
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
     std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
-    
+
     return 0;
 }
