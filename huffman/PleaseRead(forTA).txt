@@ -1,0 +1,6 @@
+Please see items uploaded on Moodle, in case the files are inaccessible on the server. The following files have been added to the server:
+1. main.cpp
+2. textfile.txt
+3. decodedtext.txt
+4. encodedtext.txt
+5. CompressionRatio.pdf
