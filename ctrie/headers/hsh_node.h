@@ -11,5 +11,5 @@ struct HSHnode
     bool wordEnd;
 
     HSHnode(char head_in, std::string label_in, bool wordEnd_in); //full constructor
-    virtual void print(); 
+    void print(); 
 };

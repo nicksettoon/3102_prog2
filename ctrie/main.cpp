@@ -13,12 +13,11 @@
 
 using str = std::string;
 using Hash = HSHtrie::Hashes;
-using s_Result = std::shared_ptr<HSHtrie::searchResult>;
 
-int main()
+int notmain()
 {
     //SET UP DATA STREAM//
-    std::shared_ptr<std::ifstream> inputstream = std::make_shared<std::ifstream>("word_list.txt");
+    std::ifstream inputstream("word_list.txt");
     str targetword;
     int listsize;
     //CREATE LLtrie//
@@ -29,6 +28,7 @@ int main()
         lltrie->insert(targetword);
         listsize++;
     }
+    inputstream.close();
     //GENERATE HASH TABLE SIZE//
     int hashtablesize = tools::getNextPrime(listsize);
     //DECIDE ON HASH FUNCTION//
@@ -36,14 +36,15 @@ int main()
     //MAKE THE HSHtrie//
     HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype);
     //GET ALL NODES FROM LLtrie// 
-    std::cout << "Copying LLtrie to HSHtrie." << std::endl;
-    lltrie->preorderTraversal(hshtrie, nullptr, lltrie->root, lltrie->root->label);
+    // lltrie->preorderTraversal(hshtrie, nullptr, lltrie->root, lltrie->root->label);
+    // std::cout << "finished" << std::endl;
+    // std::cout << "Copying LLtrie to HSHtrie." << std::endl;
     //RUN TEST FOR EACH TRIE//
-    hshtrie->testTrieSearch(inputstream);
-    lltrie->testTrieSearch(inputstream);
+    // lltrie->testTrieSearch();
+    // lltrie->search("aben");
+    // hshtrie->testTrieSearch();
     //CLEAN UP//
     delete lltrie;
     delete hshtrie;
-    inputstream->close();
     return 0;
 }

@@ -11,7 +11,7 @@ using s_Edge = EDGnode;
 using Hash = HSHtrie::Hashes;
 using Result = HSHtrie::searchResult;
 using s_Result = std::shared_ptr<HSHtrie::searchResult>;
-using Fstream = std::shared_ptr<std::ifstream>;
+using Fstream = std::ifstream;
 
                   //CONSTRUCTORS//
 //-----------------------EDGnode----------------------------//
@@ -21,7 +21,7 @@ EDGnode::EDGnode(LLnode* parent_in, LLnode* child_in) //base constructor
 HSHtrie::HSHtrie(int size_in, HSHtrie::Hashes hash_type)
     : size(size_in)
     {//full constructor//
-        std::cout << "HSHtrie size: " << this->size << std::endl;
+        // std::cout << "HSHtrie size: " << this->size << std::endl;
         edgetable.resize(this->size);
         this->setHash(hash_type);
 
@@ -32,7 +32,8 @@ HSHtrie::HSHtrie(int size_in, HSHtrie::Hashes hash_type)
 void EDGnode::print()
 {//prints the edge instance
     std::cout << "Edge: " << this << "\t";
-    std::cout << "parent: " << this->parent->head << this->parent->label << "\t";
+    if(this->parent != nullptr)
+        std::cout << "parent: " << this->parent->head << this->parent->label << "\t";
     std::cout << "child: " << this->child->head << this->child->label <<"\t";
     std::cout << "childhead: " << this->childhead << "\t";
     std::cout << "nextedge: " << this->nextedge << std::endl;
@@ -65,20 +66,24 @@ Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
 }
 //-----------------------HSHtrie----------------------------//
 // std::cout << "Finding " << target_word << " in trie." << std::endl;
-void HSHtrie::testTrieSearch(Fstream stream_in)
+void HSHtrie::testTrieSearch()
 {
-    s_Result resultinit = std::make_shared<Result>(0, HSHtrie::searchResult::NoCase);
+    std::ifstream inputstream("word_list.txt");
+    s_Result resultinit = std::make_shared<Result>(0, Result::NoCase);
     resultinit->currentnode = this->handle;
     str targetword;
+    //START TIMER AND BEGIN//
     auto start = std::chrono::high_resolution_clock::now();
-    while((*stream_in) >> targetword)
+    while (inputstream >> targetword)
     {
         resultinit->currentlabel = targetword;
         this->search(resultinit);
     }
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
+
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
+    std::cout << "HSHtrie performance for search: " << microseconds << " micro-sec" << std::endl;
+    inputstream.close();
 }
 
 s_Result HSHtrie::search(s_Result result_in)
@@ -105,55 +110,58 @@ s_Result HSHtrie::search(s_Result result_in)
         resultout = search(resultout); //recurse
         return resultout;
     }
-    else if(resultout->resultcase == Result::CaseInTrie)
+
+    if(resultout->resultcase == Result::CaseInTrie && resultout->currentnode->wordEnd == 1)
     {//if the word was found in the trie.
-        if(resultout->currentnode->wordEnd == 1)
-        {
-            std::cout << "Found node:" << std::endl;
-            std::cout << resultout->currentnode->print() << std::endl;
-            return resultout;
-        }
-    }
-    else 
-    {
-        std::cout << target_string << " was not found." << std::endl;
+        std::cout << "Found node:" << std::endl;
+        resultout->currentnode->print();
         return resultout;
     }
+    return resultout;
 }
 
 bool HSHtrie::insertEdge(LLnode* parent_in, LLnode* child_in)
 {//insert function, uses this->hash()
-    //make edge
     Edge* newedge;
     int hashresult;
 
     if(parent_in != nullptr)
-    {
+    {//first insert will be root with nullptr as parent, checking for no nullptr means 1 check per insert
+     //other way around we'd be constantly checking for root
         newedge = new Edge(parent_in, child_in);
-        hashresult = getHash(parent_in, child_in->head);
-    }
+        hashresult = getHash(parent_in, child_in->head); }
     else
-    {
+    {//if we are inserting root
         this->handle = child_in;
-        newedge = new Edge(child_in, child_in);
-        hashresult = getHash(this->handle, child_in->head);
+        newedge = new Edge(nullptr, child_in); 
+        hashresult = getHash(child_in, child_in->head);
     }
-    if (this->edgetable[hashresult] != NULL)
-    {
-        Edge* collidingedge = this->edgetable[hashresult];
+
+    if (this->edgetable[hashresult] != 0)
+    {//if edgetable has an entry there already
+        //PUSH LINKED LIST OUT OF SLOT//
+        Edge* collidingedge = this->edgetable[hashresult]; //push linked list down
+        //INSERT newedge AT FRONT OF LINKED LIST//
         newedge->nextedge = collidingedge;
+        //PUT newedge IN EMPTY edgetable SLOT//
         this->edgetable[hashresult] = newedge;
-    }
-    else
+        // std::cout << "Inserting: " << std::endl;
+        // newedge->print();
+        std::cout << " @ " << hashresult << std::endl; }
+    else //JUST INSERT//
     {
+        // std::cout << "Inserting: " << std::endl;
+        // newedge->print();
+        std::cout << " @ " << hashresult << std::endl;
         this->edgetable[hashresult] = newedge;
     }
+
     return 1;
 }
 
 void HSHtrie::setHash(Hash desired_hash)
 {//sets the HSHtrie's hash function to one of the defined options in the Hashes enum
-    std::cout << "Setting hash function to: " << desired_hash << std::endl;
+    // std::cout << "Setting hash function to: " << desired_hash << std::endl;
 
     switch (desired_hash)
     {
@@ -185,7 +193,7 @@ EDGnode* HSHtrie::getEdge(LLnode* parent_in, char head_in)
 int HSHtrie::primeHash(int parent_addr, char child_head)
 {//hash with basic arthimetic and prime mod
     int b = 5;
-    int result = ((parent_addr + (int)child_head * (int)std::pow(b,31)) % this->size);
+    int result = ((parent_addr + (int)child_head * (unsigned int)std::pow(b,31)) % this->size);
     return result;
 }
   
@@ -196,12 +204,12 @@ s_Result HSHtrie::compareLabel(s_Result result_in, LLnode* target_node)
 
     str& c_l = result_in->currentlabel;            //reference ("target label") to make it easier to type
     str& n_l = target_node->label;      //reference ("node label") to make it easier to type
-
+    int& i = result_in->index;
 
     for(char c:c_l) //What if comparing single letter which already exists at target_node? c=null?
     {//for each char in the target_label, compare it against the label @ the target_node
 
-        if(result_in->index == n_l.length())
+        if(i == n_l.length())
         {//case 1: If the index for node_label is equal to the  length of node_label and
          //the for loop is still going, the target_label is a superstring of the node_label
             // prt("hit case 1");
@@ -213,7 +221,7 @@ s_Result HSHtrie::compareLabel(s_Result result_in, LLnode* target_node)
 
         if(c == n_l[i])
         {//If current char in target_label is the same as the char @ same position in the node_label
-            result_in->index++;    //move to next char in node_label and next iteration of for loop
+            i++;    //move to next char in node_label and next iteration of for loop
         }
         else
         {//case 2.1: Neither target_label nor node_label have run out of chars, but the current chars differ
@@ -249,41 +257,8 @@ s_Result HSHtrie::compareLabel(s_Result result_in, LLnode* target_node)
         return result_in;
 }
 
-HSHtrie::searchResult::searchResult(int index_in, CompCase case_in)
+Result::searchResult(int index_in, CompCase case_in)
 {//constructor for searchResult struct
     index = index_in;
     resultcase = case_in;
-}
-
-
-
-stack lltrie::evalCase(stack stack_in)
-{//evaluates the result of the compareLabel() output and decides what to do
-    LLnode* tn = stack_in->targetnode;
-    comp res = stack_in->result;
-    str tl = stack_in->targetlabel;
-
-    switch (res->resultcase)
-    {
-    case CaseSuperstr: //if targetlabel ended up being a superstr of the targetnode's label
-        if (stack_in->targetnode->child1 != nullptr)
-        {//check for child @ the target node
-            //if so, reset the searchStack with newly constructed searchStack that has adjusted label and targetnode
-            stack_in = std::make_shared<searchStack>(tl.substr(res->index), tn->child1);
-            /*turns out the index returned from compareLabel() is the position where a split would have happend
-            and as such it signifies where to split the targetlabel to pass it on.*/
-            return stack_in; //return searchStack to be 
-        }
-        else
-        {//targetnode has no child, which means original target_word is not in trie.
-            stack_in = std::make_shared<searchStack>(tl.substr(res->index), tn);
-            res->resultcase = CaseNotInTrie;
-            res->locationfound = 1;
-            return stack_in;
-        }
-        break;
-    default:
-        break;
-    }
-    return stack_in;
 }

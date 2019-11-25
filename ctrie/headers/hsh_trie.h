@@ -15,8 +15,6 @@ struct EDGnode
     EDGnode(LLnode* parent_in, LLnode* child_in); //base constructor
     //MEMBER FUNCTIONS//
     void print(); //prints EDGnode's information
-
-private:
     //FIELDS//
     LLnode* parent;   //pointer to parent of relationship
     LLnode* child;    //pointer to child of relationship
@@ -63,7 +61,7 @@ public:
     //MEMBER FUNCTIONS//
     bool insertEdge(LLnode* parent_in, LLnode* child_in);  //insert edge into trie function
     std::shared_ptr<searchResult> search(std::shared_ptr<searchResult> result_in);  //search function, uses hash()
-    void testTrieSearch(std::shared_ptr<std::ifstream>stream_in);
+    void testTrieSearch();
     void setHash(Hashes hash_type);  //set the desired hash function for the HSHtrie
     // bool insertString(std::string string_in);    //insert string into HSHtrie
     // void preorderTraversal(LLnode* start_node, std::string prefix_context);
@@ -77,10 +75,10 @@ private:
     int (HSHtrie::*hash)(int, char);
 
     //HASH FUNCTIONS//
-    int primeHash(int parent_addr, char child_head)
-    {//hash with basic arthimetic and prime mod
-        int b = 5;
-        int result = ((parent_addr + (int)child_head * (int)std::pow(b,31)) % this->size);
-        return result;
-    }
+    int primeHash(int parent_addr, char child_head);
+    // {//hash with basic arthimetic and prime mod
+    //     int b = 5;
+    //     int result = ((parent_addr + (int)child_head * (int)std::pow(b,31)) % this->size);
+    //     return result;
+    // }
 };

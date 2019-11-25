@@ -18,7 +18,7 @@ namespace tools
 
     int getNextPrime(int number_in)
     {
-        std::cout << "getting next prime number after " << number_in << std::endl;
+        // std::cout << "getting next prime number after " << number_in << std::endl;
         int primeout=0;
 
         for(int i = number_in;;i++)//No end limit as when prime is found we will break the loop.
@@ -29,7 +29,7 @@ namespace tools
                 break;
             }
         }
-        std::cout <<"Next prime number is: " << primeout << std::endl;
+        // std::cout <<"Next prime number is: " << primeout << std::endl;
         return primeout;
     };
 }

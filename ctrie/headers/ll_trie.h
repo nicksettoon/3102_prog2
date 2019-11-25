@@ -21,5 +21,6 @@ public:
     void insert(std::string word_in);
     void search(std::string target_word);
     void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_parent, LLnode* start_node, std::string prefix_context);
-    void LLtrie::testTrieSearch(std::shared_ptr<std::ifstream> stream_in);
+    // void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_node, std::string prefix_context);
+    void testTrieSearch();
 };

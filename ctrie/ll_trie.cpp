@@ -6,42 +6,56 @@
 // #include <memory>    //included in hsh_node.h
 
 using str = std::string;
-using Fstream = std::shared_ptr<std::ifstream>;
+using Fstream = std::ifstream;
 
+// void LLtrie::preorderTraversal(HSHtrie* target_hashtrie, LLnode* current_node, str prefix_context)
 void LLtrie::preorderTraversal(HSHtrie* target_hashtrie, LLnode* parent_in, LLnode* current_node, str prefix_context)
 {//traverses the trie in preorder giving each parent child relationship to the HSHtrie insert function
     if(current_node == nullptr){return;}
-    
-    str prefix = prefix_context + current_node->label;
-    target_hashtrie->insertEdge(parent_in, current_node);
+    //UPDATE PREFIX//
+    prefix_context = prefix_context + current_node->label;
+
+    if(current_node->wordEnd && prefix_context != "acdeme")
+        std::cout << prefix_context << std::endl;
+
+    //INSERT THE HSHedge//
+    // target_hashtrie->insertEdge(parent_in, current_node);
+    if(parent_in != nullptr)
+    {
+        std::cout << "parent: " << parent_in->label << std::endl;
+        std::cout << "child: " << current_node->label << std::endl;
+        std::cout << std::endl;
+    }
 
     LLnode* nextnode = current_node->firstChild;
-    if (nextnode != nullptr)
+    while (nextnode != nullptr)//if there is a child, visit that child
     {
-        LLnode* parentout = current_node;
-        preorderTraversal(target_hashtrie, parentout, nextnode, prefix);
-    }
-    else
-        nextnode = current_node->rightSibling;
-
-    while(nextnode != nullptr)
-    {
-        preorderTraversal(target_hashtrie, parent_in, nextnode, prefix);
+        // preorderTraversal(target_hashtrie, current_node, nextnode, prefix_context);
+        preorderTraversal(target_hashtrie, current_node, nextnode, prefix_context);
         nextnode = nextnode->rightSibling;
+        while (nextnode != nullptr)
+        {
+            preorderTraversal(target_hashtrie, current_node, nextnode, prefix_context);
+            nextnode = nextnode->rightSibling;
+        }
     }
 }
 
-void LLtrie::testTrieSearch(Fstream stream_in)
+void LLtrie::testTrieSearch()
 {//runs searches for every word in the stream_in and outputs the time it takes in microseconds
+    std::ifstream inputstream("word_list.txt");
     str targetword;
+    //START TIMER AND BEGIN//
     auto start = std::chrono::high_resolution_clock::now();
-    while((*stream_in) >> targetword)
+    while (inputstream >> targetword)
     {
         this->search(targetword);
     }
     auto elapsed = std::chrono::high_resolution_clock::now() - start;
+
     long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
     std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
+    inputstream.close();
 }
 
 LLtrie::LLtrie() //constructor
@@ -199,42 +213,44 @@ void LLtrie::insert(str word)
     }
 }
 
-void LLtrie::search(str word)
+void LLtrie::search(str word_in)
 {
-    LLnode *rootchild = root->firstChild;
-    if(rootchild == nullptr) //empty trie
+    LLnode *currentnode = root->firstChild;
+    bool found = false;
+    if(currentnode == nullptr) //empty trie
     {
+        std::cout << "Trie is empty." << std::endl;
         return;
     }
-    else //not empty trie, start searcg
+    else //not empty trie, start search
     {
         int i = 0;
-            while(rootchild != nullptr && rootchild->head < word[i])
+        // while()
+            while(currentnode != nullptr && currentnode->head < word_in[i])
             {
-                rootchild = rootchild->rightSibling; //continue through level
+                currentnode= currentnode->rightSibling; //continue through level
             }
-            if(rootchild == nullptr) //reached end, not found
+            if(currentnode == nullptr) //reached end, not found
             {
-                std::cout << word << " is not found " << std::endl;
+                std::cout << word_in << " is not found " << std::endl;
                 return;
             }
             else //continue search
             {
                 i++;
-                bool found = false;
-                while(!found && i < rootchild->label.length())
+                while(!found && i < currentnode->label.length())
                 {
-                    if(word[i] == rootchild->label[i]) //still matching, continue
+                    if(word_in[i] == currentnode->label[i]) //still matching, continue
                     {
                         i++;
                     }
                     else
                     {
-                         rootchild = rootchild->firstChild; //next level
+                         currentnode = currentnode->firstChild; //next level
                          found = true;
                     }
                 }
             }
-        std::cout << word << " found." << std::endl;
+        std::cout << word_in << " found." << std::endl;
     }
 }
