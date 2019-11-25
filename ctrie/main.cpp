@@ -1,44 +1,49 @@
-#include<fstream>
-#include <chrono>
-// #include<iostream>  //included in node.h
-// #include<string>    //included in node.h
+#include <fstream>
 #include "headers/ll_trie.h"
 #include "headers/hsh_trie.h"
+// #include <vector>    //included in hsh_trie.h
+// #include <math.h>    //included in hsh_trie.h
+// #include <fstream>   //included in hsh_trie.h 
+// #include <chrono>    //included in hsh_trie.h
+// #include <string>    //included in hsh_node.h
+// #include <iostream>  //included in hsh_node.h
+// #include <stdio.h>   //included in hsh_node.h
+// #include <memory>    //included in hsh_node.h
+#include "headers/tools.h"
 
 using str = std::string;
-using Hash = HashTrie::Hashes;
+using Hash = HSHtrie::Hashes;
+using s_Result = std::shared_ptr<HSHtrie::searchResult>;
 
 int main()
 {
-
-    LinkedList* trie;
-    trie = new LinkedList;
-    std::ifstream input;
-    str word;
-    input.open("words.txt");
-    int count;
-    while (input >> word)
+    //SET UP DATA STREAM//
+    std::shared_ptr<std::ifstream> inputstream = std::make_shared<std::ifstream>("word_list.txt");
+    str targetword;
+    int listsize;
+    //CREATE LLtrie//
+    LLtrie* lltrie = new LLtrie;
+    //FILL IT//
+    while (inputstream >> targetword)
     {
-        trie->insert(word);
-        count++;
+        lltrie->insert(targetword);
+        listsize++;
     }
-    std::cout << count << std::endl;
-    input.close();
-
-    Hash hashtype = Hash::prime; 
-    HashTrie* hshtrie = new HashTrie(1009, hashtype);
-    trie->getNodes(hshtrie, nullptr, trie->root, trie->root->label);
-
-    // input.open("words.txt");
-    // auto start = std::chrono::high_resolution_clock::now();
-    // while(input >> word)
-    // {
-    //     trie->search(word);
-    // }
-    // input.close();
-    // auto elapsed = std::chrono::high_resolution_clock::now() - start;
-    // long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    // std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
-
+    //GENERATE HASH TABLE SIZE//
+    int hashtablesize = tools::getNextPrime(listsize);
+    //DECIDE ON HASH FUNCTION//
+    Hash hashtype = Hash::prime;
+    //MAKE THE HSHtrie//
+    HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype);
+    //GET ALL NODES FROM LLtrie// 
+    std::cout << "Copying LLtrie to HSHtrie." << std::endl;
+    lltrie->preorderTraversal(hshtrie, nullptr, lltrie->root, lltrie->root->label);
+    //RUN TEST FOR EACH TRIE//
+    hshtrie->testTrieSearch(inputstream);
+    lltrie->testTrieSearch(inputstream);
+    //CLEAN UP//
+    delete lltrie;
+    delete hshtrie;
+    inputstream->close();
     return 0;
 }

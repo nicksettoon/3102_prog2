@@ -1,39 +1,55 @@
-#include <typeinfo>
 #include "headers/ll_trie.h"
 #include "headers/hsh_trie.h"
-
+// #include <string>    //included in hsh_node.h
+// #include <iostream>  //included in hsh_node.h
+// #include <stdio.h>   //included in hsh_node.h
+// #include <memory>    //included in hsh_node.h
 
 using str = std::string;
+using Fstream = std::shared_ptr<std::ifstream>;
 
-void LinkedList::getNodes(HashTrie* target_hashtrie, LLNode* parent_in, LLNode* current_node, str prefix_context)
-{//traverses the trie in preorder giving each parent child relationship to the HashTrie insert function
+void LLtrie::preorderTraversal(HSHtrie* target_hashtrie, LLnode* parent_in, LLnode* current_node, str prefix_context)
+{//traverses the trie in preorder giving each parent child relationship to the HSHtrie insert function
     if(current_node == nullptr){return;}
     
     str prefix = prefix_context + current_node->label;
-    target_hashtrie->insert(parent_in, current_node);
+    target_hashtrie->insertEdge(parent_in, current_node);
 
-    LLNode* nextnode = current_node->firstChild;
+    LLnode* nextnode = current_node->firstChild;
     if (nextnode != nullptr)
     {
-        LLNode* parentout = current_node;
-        getNodes(target_hashtrie, parentout, nextnode, prefix);
+        LLnode* parentout = current_node;
+        preorderTraversal(target_hashtrie, parentout, nextnode, prefix);
     }
     else
         nextnode = current_node->rightSibling;
 
     while(nextnode != nullptr)
     {
-        getNodes(target_hashtrie, parent_in, nextnode, prefix);
+        preorderTraversal(target_hashtrie, parent_in, nextnode, prefix);
         nextnode = nextnode->rightSibling;
     }
 }
 
-LinkedList::LinkedList() //constructor
-{
-    root = new LLNode('$', "", false, nullptr, nullptr);
+void LLtrie::testTrieSearch(Fstream stream_in)
+{//runs searches for every word in the stream_in and outputs the time it takes in microseconds
+    str targetword;
+    auto start = std::chrono::high_resolution_clock::now();
+    while((*stream_in) >> targetword)
+    {
+        this->search(targetword);
+    }
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    std::cout << "Linked list performance for search: " << microseconds << " micro-sec" << std::endl;
 }
 
-str LinkedList::findSubstring(int i, int j, str word)
+LLtrie::LLtrie() //constructor
+{
+    root = new LLnode('$', "", false, nullptr, nullptr);
+}
+
+str LLtrie::findSubstring(int i, int j, str word)
 {
     str substring;
     if(i == j)
@@ -44,14 +60,14 @@ str LinkedList::findSubstring(int i, int j, str word)
     return substring;
 }
 
-void LinkedList::insert(str word)
+void LLtrie::insert(str word)
 {
     // std::cout << "Inserting " << word << " into trie" << std::endl;
 
     if(root->firstChild == nullptr) //trie empty, insert first word
     {
         // std::cout << "Trie empty" << std::endl;
-        LLNode * node = new LLNode(word[0], word, false, nullptr, nullptr);
+        LLnode * node = new LLnode(word[0], word, false, nullptr, nullptr);
         root->firstChild = node;
         return;
     }
@@ -60,9 +76,9 @@ void LinkedList::insert(str word)
         // std::cout << "Trie not empty" << std::endl;
         int i = 0;
         bool done = false;
-        LLNode *rootchild = root->firstChild;
-        LLNode *prevNode = nullptr;
-        LLNode *parent = root;
+        LLnode *rootchild = root->firstChild;
+        LLnode *prevNode = nullptr;
+        LLnode *parent = root;
         while(!done)
         {
             while(rootchild != nullptr && rootchild->label[i] < word[i]) //check char
@@ -102,10 +118,10 @@ void LinkedList::insert(str word)
                         firstChildLabel = findSubstring(i, rootchild->label.length() - 1, rootchild->label);
                         rightSiblingLabel = findSubstring(i, word.length() - 1, word);
                     }
-                    rootchild->isWord = false;
+                    rootchild->wordEnd = false;
                     rootchild->label = newLabel; //new label for split case
-                    LLNode *rightSib = new LLNode(rightSiblingLabel[0], rightSiblingLabel, true, nullptr, nullptr);
-                    LLNode *leftChild = new LLNode(firstChildLabel[0], firstChildLabel, true, nullptr, rightSib);
+                    LLnode *rightSib = new LLnode(rightSiblingLabel[0], rightSiblingLabel, true, nullptr, nullptr);
+                    LLnode *leftChild = new LLnode(firstChildLabel[0], firstChildLabel, true, nullptr, rightSib);
                     if(rootchild->firstChild == nullptr)
                     {
                         rootchild->firstChild = leftChild;
@@ -141,22 +157,22 @@ void LinkedList::insert(str word)
                        else //make new node to be child for rootchild
                        {
                            str childLabel = findSubstring(i, word.length() - 1, word);
-                           LLNode *newChild = new LLNode(childLabel[0], childLabel, true, nullptr, nullptr);
+                           LLnode *newChild = new LLnode(childLabel[0], childLabel, true, nullptr, nullptr);
                            rootchild->firstChild = newChild;
                            done = true;
                        }
                     }
                     else if(rootchild->label.length() == word.length()) //same length
                     {
-                         rootchild->isWord = true; //set to true
+                         rootchild->wordEnd = true; //set to true
                          done = true;
                     }
                     else
                     {
                         str newChildLabel = findSubstring(i, rootchild->label.length() - 1, rootchild->label);
                         rootchild->label = findSubstring(0, rootchild->label.length() - 1, rootchild->label);
-                        rootchild->isWord = true; //set to true
-                        LLNode * node = new LLNode(newChildLabel[0], newChildLabel, true, rootchild->firstChild, nullptr);
+                        rootchild->wordEnd = true; //set to true
+                        LLnode * node = new LLnode(newChildLabel[0], newChildLabel, true, rootchild->firstChild, nullptr);
                         rootchild->firstChild = node;
                         done = true;
                     }
@@ -166,13 +182,13 @@ void LinkedList::insert(str word)
             {
                 if(prevNode == nullptr) //new level, make firstChild of level
                 {
-                    LLNode* node = new LLNode(word[i], word, true, nullptr, rootchild);
+                    LLnode* node = new LLnode(word[i], word, true, nullptr, rootchild);
                     parent->firstChild = node;
                     done = true;
                 }
                 else //make to be rightSibling
                 {
-                    LLNode * node = new LLNode(word[0], word, true, nullptr, rootchild);
+                    LLnode * node = new LLnode(word[0], word, true, nullptr, rootchild);
                     prevNode->rightSibling = node;
                     done = true;
                 }
@@ -183,9 +199,9 @@ void LinkedList::insert(str word)
     }
 }
 
-void LinkedList::search(str word)
+void LLtrie::search(str word)
 {
-    LLNode *rootchild = root->firstChild;
+    LLnode *rootchild = root->firstChild;
     if(rootchild == nullptr) //empty trie
     {
         return;
@@ -193,7 +209,7 @@ void LinkedList::search(str word)
     else //not empty trie, start searcg
     {
         int i = 0;
-            while(rootchild != nullptr && rootchild->letter < word[i])
+            while(rootchild != nullptr && rootchild->head < word[i])
             {
                 rootchild = rootchild->rightSibling; //continue through level
             }
