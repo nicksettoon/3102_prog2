@@ -28,13 +28,17 @@ int notmain()
         lltrie->insert(targetword);
         listsize++;
     }
-    inputstream.close();
     //GENERATE HASH TABLE SIZE//
     int hashtablesize = tools::getNextPrime(listsize);
     //DECIDE ON HASH FUNCTION//
     Hash hashtype = Hash::prime;
     //MAKE THE HSHtrie//
     HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype);
+    while (inputstream >> targetword)
+    {
+        hshtrie->insertString(targetword);
+    }
+    inputstream.close();
     //GET ALL NODES FROM LLtrie// 
     // lltrie->preorderTraversal(hshtrie, nullptr, lltrie->root, lltrie->root->label);
     // std::cout << "finished" << std::endl;

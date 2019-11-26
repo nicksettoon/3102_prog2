@@ -1,9 +1,18 @@
 #pragma once
-#include "hsh_node.h"
-// #include <string>    //included in hsh_node.h
-// #include <iostream>  //included in hsh_node.h
-// #include <stdio.h>   //included in hsh_node.h
-// #include <memory>    //included in hsh_node.h
+#include <string>
+#include <iostream>
+#include <stdio.h>
+#include <memory>
+
+struct HSHnode
+{
+    char head;
+    std::string label;
+    bool wordEnd;
+
+    HSHnode(char head_in, std::string label_in, bool wordEnd_in); //full constructor
+    void print(); 
+};
 
 struct LLnode
 {

@@ -11,7 +11,8 @@
                 "${workspaceFolder}/${relativeFileDirname}",
                 "${fileBasename}",
                 "${fileBasenameNoExtension}",
-                "0"
+                "0", //flag for deleting main after build and run
+                "1" //flag for saving output to file and diff it with output
             ],
             "group": {
                 "kind": "build",

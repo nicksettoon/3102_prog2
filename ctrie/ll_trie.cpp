@@ -1,9 +1,9 @@
 #include "headers/ll_trie.h"
 #include "headers/hsh_trie.h"
-// #include <string>    //included in hsh_node.h
-// #include <iostream>  //included in hsh_node.h
-// #include <stdio.h>   //included in hsh_node.h
-// #include <memory>    //included in hsh_node.h
+// #include <string>    //included in t_nodes.h
+// #include <iostream>  //included in t_nodes.h
+// #include <stdio.h>   //included in t_nodes.h
+// #include <memory>    //included in t_nodes.h
 
 using str = std::string;
 using Fstream = std::ifstream;
@@ -41,7 +41,7 @@ void LLtrie::preorderTraversal(HSHtrie* target_hashtrie, LLnode* parent_in, LLno
     }
 }
 
-void LLtrie::testTrieSearch()
+void LLtrie::testSearch()
 {//runs searches for every word in the stream_in and outputs the time it takes in microseconds
     std::ifstream inputstream("word_list.txt");
     str targetword;

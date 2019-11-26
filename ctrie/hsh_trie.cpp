@@ -1,33 +1,42 @@
 #include "headers/hsh_trie.h"
-#include "headers/ll_node.h"
-// #include <string>    //included in hsh_node.h
-// #include <iostream>  //included in hsh_node.h
-// #include <stdio.h>   //included in hsh_node.h
-// #include <memory>    //included in hsh_node.h
+// #include <string>    //included in t_nodes.h
+// #include <iostream>  //included in t_nodes.h
+// #include <stdio.h>   //included in t_nodes.h
+// #include <memory>    //included in t_nodes.h
 
 using str = std::string;
+using Node = LLnode;
 using Edge = EDGnode;
 using s_Edge = EDGnode;
 using Hash = HSHtrie::Hashes;
-using Result = HSHtrie::searchResult;
-using s_Result = std::shared_ptr<HSHtrie::searchResult>;
+using Stack = HSHtrie::searchStack;
+using s_Stack = std::shared_ptr<HSHtrie::searchStack>;
 using Fstream = std::ifstream;
 
                   //CONSTRUCTORS//
 //-----------------------EDGnode----------------------------//
-EDGnode::EDGnode(LLnode* parent_in, LLnode* child_in) //base constructor
+EDGnode::EDGnode(Node* parent_in, Node* child_in) //base constructor
     : parent(parent_in), child(child_in), childhead(child_in->head), nextedge(nullptr) {/*base constructor*/}
 //-----------------------HSHtrie----------------------------//
 HSHtrie::HSHtrie(int size_in, HSHtrie::Hashes hash_type)
     : size(size_in)
-    {//full constructor//
-        // std::cout << "HSHtrie size: " << this->size << std::endl;
-        edgetable.resize(this->size);
-        this->setHash(hash_type);
+{//full constructor//
+    // std::cout << "HSHtrie size: " << this->size << std::endl;
+    edgetable.resize(this->size);
+    this->setHash(hash_type);
 
-    }
+}
     
+Stack::searchStack(int index_in, Stack::CompCase case_in, str string_in, Node* start_node)
+{//constructor for searchStack struct
+    index = index_in;
+    resultcase = case_in;
+    targetstring = string_in;
+    Node* currentnode = start_node; 
+    currentedge = nullptr;
+}
                 //MEMBER FUNCTIONS//
+
 //-----------------------EDGnode----------------------------//
 void EDGnode::print()
 {//prints the edge instance
@@ -39,7 +48,7 @@ void EDGnode::print()
     std::cout << "nextedge: " << this->nextedge << std::endl;
 }
 
-Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
+Edge* EDGnode::searchList(Node* target_parent, char target_childhead)
 {//searches the linked list of EDGnode nodes for node with correct parent and childhead
     /*FILL*/
     std::cout << "Finding parent: " << target_parent << " childhead: " << target_childhead << std::endl;
@@ -65,62 +74,231 @@ Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
     return currentedge;
 }
 //-----------------------HSHtrie----------------------------//
-// std::cout << "Finding " << target_word << " in trie." << std::endl;
-void HSHtrie::testTrieSearch()
-{
-    std::ifstream inputstream("word_list.txt");
-    s_Result resultinit = std::make_shared<Result>(0, Result::NoCase);
-    resultinit->currentnode = this->handle;
-    str targetword;
-    //START TIMER AND BEGIN//
-    auto start = std::chrono::high_resolution_clock::now();
-    while (inputstream >> targetword)
-    {
-        resultinit->currentlabel = targetword;
-        this->search(resultinit);
-    }
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
 
-    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-    std::cout << "HSHtrie performance for search: " << microseconds << " micro-sec" << std::endl;
-    inputstream.close();
+bool HSHtrie::insertString(str string_in)
+{//inserts string into HSHtrie
+    std::cout << "Inserting: " << string_in << std::endl;
+    //BUILD searchStack OBJECT//
+    s_Stack searchstack = std::make_shared<s_Stack>(0, Stack::NoCase, string_in, this->root);
+
+    //SEARCH FOR LOCATION TO INSERT//
+    searchstack = this->search(searchstack, 1);
+
+    Node c_n = &(searchstack->currentnode);
+    int& i = searchstack->index;
+
+    //INTERPRET SEARCH RESULT//
+    switch (searchstack->resultcase)
+    {
+    case Stack::CaseNotInTrie:
+        //INSERT//
+        //make new node
+        Node* newnode = new Node(string_in[i], string_in.substr(i+1), 1);
+        //make new edge
+        Edge newedge = new Edge(c_n, newnode);
+        break;
+
+    case Stack::CaseSubstr:
+        //INSERT//
+        //make new node
+        Node* newnode = new Node(c_n->label[i], string_in.substr(i+1), 1);
+        //cut new parent at index
+        c_n->label = c_n->label.substr(0,i-1);
+        //set new parent as wordend
+        c_n->wordEnd = 1;
+        //make new edge
+        Edge newedge = new Edge(c_n, newnode);
+        break;
+
+    case Stack::CaseDiv: //
+        //INSERT//
+        //new node for string being inserted
+        if(i == string_in.length())
+        {//if this is the case label needs to be empty str
+            Node* newnode = new Node(string_in[i], "", 1); }
+        else
+            Node* newnode = new Node(string_in[i], string_in.substr(i+1), 1);
+        //new node for remaining label of current node 
+        Node* remainingstr = new Node(c_n->label[i], string_in.substr(i+1), c_n->wordEnd);
+        //cut parent's label at index and mark as not a word
+        c_n->label = c_n->label.substr(0,i-1);
+        c_n->wordEnd = 0;
+        //make new edge
+        Edge newnodeedge = new Edge(c_n, newnode);
+        Edge remainingstredge = new Edge(c_n, remainingstr);
+        break;
+
+    case Stack::CaseInTrie:
+        //PRINT NODE AS PROOF//
+        std::cout << "Found node:" << std::endl;
+        stackout->currentedge->child->print();
+        break;
+
+    case Stack::CaseFound:
+        //NOTIFY AND PRINT NODE//
+        std::cout << "The string is in the trie. It's just not marked as a word." << std::endl;
+        std::cout << "Inserting..." << std::endl;
+        searchstack->currentedge->child->wordEnd = 1; 
+        break;
+
+    default:
+        std::cout << "Well done. No idea how you got here. Theres a problem with HSHtrie::search" << std::endl;
+        break;
+    }    
+
+    //CONFIRM INSERT WORKED//
+    if(this->insertString(searchstack->targetstring))
+        return 1;
+    else
+        std::cout << "Inserting " << searchstack->targetstring <<< " failed." << std::endl;
+        return 0;
 }
 
-s_Result HSHtrie::search(s_Result result_in)
+s_Stack HSHtrie::search(s_Stack stack_in, bool insert_flag)
 {
     //check if trie is empty by checking for first child node of root
-    s_Result resultout = result_in; 
+    s_Stack stackout = stack_in; 
     //GET NEXT EDGnode//
-    Edge* targetedge = getEdge(result_in->currentnode, result_in->currentlabel[0]);
+    stackout->currentedge = getEDGnode(stack_in->currentnode, stack_in->targetstring[stack_in->index]); 
 
-    if (targetedge == nullptr)
-    {//if that edge doesn't exist, there is no child node with the rest of the label
-        std::cout << resultout->currentlabel << " was not found." << std::endl;
-        resultout->resultcase = Result::CaseNotInTrie;
-        // resultout->locationfound = NULL;
-        return resultout;
+    if (stackout->currentedge == nullptr)
+    {//if that edge doesn't exist, there is no child node with that head
+        std::cout << stackout->targetstring << " was not found in the trie." << std::endl;
+        stackout->resultcase = Stack::CaseNotInTrie;
+        // stackout->locationfound = NULL;
+        return stackout;
     }
-    //COMPARE THE LABELS//
-    resultout = compareLabel(resultout, targetedge->child);
+    //COMPARE THE LABELS(stackout->targetstring against stackout->currentedge->child->label)//
+    stackout = compareSubstr(stack_in);
 
-    //EVALUATE RESULT//
-    if (resultout->resultcase == Result::CaseSuperstr)
-    {//if the target_string was a superstring of the child's label 
-        resultout->currentnode = targetedge->child;  //move the node down a level
-        resultout = search(resultout); //recurse
-        return resultout;
-    }
-
-    if(resultout->resultcase == Result::CaseInTrie && resultout->currentnode->wordEnd == 1)
-    {//if the word was found in the trie.
+    //EVALUATE COMPARISON RESULT//
+    switch (stackout->resultcase)
+    {
+    case Stack::CaseSuperstr:
+        stackout->currentnode = stackout->currentedge->child;  //move the search's currentnode to the child
+        //maybe edit targetstring here?
+        stackout = search(stackout); //recurse with child as new focus
+        return stackout;
+    
+    case Stack::CaseInTrie:
+        //PRINT NODE AS PROOF//
+        if(insert_flag)//don't print if search is being called by insertStr()
+            return stackout;
         std::cout << "Found node:" << std::endl;
-        resultout->currentnode->print();
-        return resultout;
+        stackout->currentnode->print();
+        return stackout;
+
+    case Stack::CaseFound:
+        //NOTIFY AND PRINT NODE//
+        if(insert_flag)//don't print if search is being called by insertStr()
+            return stackout;
+        std::cout << "The string is in the trie. It's just not marked as a word." << std::endl;
+        return stackout;
+
+    default:
+        return stackout;
     }
-    return resultout;
+    std::cout << "Well done. No idea how you got here. Theres a problem with HSHtrie::search" << std::endl;
+    return stackout;
 }
 
-bool HSHtrie::insertEdge(LLnode* parent_in, LLnode* child_in)
+s_Stack HSHtrie::compareSubstr(s_Stack stack_in)
+{//Compares the targetstring to the target label at target_node.
+ //returns case the comparison falls under, as well as the index at which to split if necessary
+    //DECLARE REFERENCES//
+    s_Stack stackout = stack_in;
+    str& si = stack_in->targetstring; //reference ("string using i as iterator")
+    str& sj = stack_in->currentedge->child->label;   //reference ("string using j as iterator")
+    int& i = stack_in->index;          //reference ("index")
+    int j = 0; //index for counting through target label
+    
+    std::cout << "Comparing: " << si << " against " << sj << std::endl;
+
+    while (j < sj.length() && si[i] == sj[j])
+    {//while we haven't reached the end of the target label and the current characters match
+        //INCREMENT INDEXES//
+        i++;
+        j++;
+        if (i == si.length())
+        {//if end of targetstring is reached, but still comparing
+            //SET SEARCH CASE//
+            stackout->resultcase = Stack::CaseSubstr;
+            return stackout;
+        }        
+    }
+    //POST WHILE LOOP CHECKS//
+    if (j == sj.length())
+    {//this means we went though the entire target label
+       if (i < si.length())
+       {//this means there is still more of the targetstring left
+           //SET SEARCH CASE//
+           stackout->resultcase = Stack::CaseSuperstr; }
+       else if (i == si.length())
+       {//this means the target label and the substring of the targetstring are identical suffixes
+           //SET SEARCH CASE//
+           if (stack_in->currentedge->child->wordEnd)
+           {//if the targetlabel is marked as end of word
+               stackout->resultcase = Stack::CaseInTrie; }
+           else//targetstring was found, but isn't marked as a word
+               stackout->resultcase = Stack::CaseFound; } } 
+    else if (j < sj.length())
+    {//this means the strings stopped matching before the end of the targetlabel was reached
+        //SET SEARCH CASE//
+        stackout->resultcase = Stack::CaseDiv; }
+    //THIS POINT SHOULD NEVER BE REACHED//
+        //j might have overflowed past the end of the target label
+    std::cout << "You shouldn't be here. Don't pay any attention to the man behind the curtain. HSHtrie::compareSubstr has problems." << std::endl;
+    return stackout;
+    
+    //OLD compareLable()
+    // for(char c:si) //What if comparing single letter which already exists at target_node? c=null?
+    // {//for each char in the targetstring, compare it against the label @ the target_node
+
+    //     if(i == sj.length())
+    //     {//case 1: If the index for target label is equal to the  length of target label and
+    //      //the for loop is still going, the targetstring is a superstring of the target label
+    //         // stack_in->index = i;  //return index of where to begin 
+    //         stack_in->resultcase = Stack::CaseSuperstr; //case to show the targetstring is a superstring of the target label
+    //         // stack_in->locationfound = 0;
+    //         return stack_in;
+    //     }
+
+    //     if(c == sj[i])
+    //     {//If current char in targetstring is the same as the char @ same position in the target label
+    //         i++;    //move to next char in target label and next iteration of for loop
+    //     }
+    //     else
+    //     {//case 2.1: Neither targetstring nor target label have run out of chars, but the current chars differ
+    //      //the targetstring diverges from the target label
+    //         // prt("hit case 2.1");
+    //         // stack_in->index = i; //return the index at which they diverge for splitting later
+    //         stack_in->resultcase = Stack::CaseDiv; //set case to show the targetstring diverges from the node label at i
+    //         // stack_in->locationfound = 1;
+    //         return stack_in; 
+    //     }
+    // }
+    // //all chars in targetstring have been compared
+    // if(i < sj.length())
+    // {//case 2.2: 1. The for loop ended without differing strings, and 2. end of target label was not reached
+    //  //The targetstring is a substring of target_node's label.
+    //     // prt("hit case 2.1");
+    //     // stack_in->index = i; //return the index at which they diverge for splitting later
+    //     stack_in->resultcase = Stack::CaseSubstr;   //set case to show the targetstring is a substring of the label
+    //     // stack_in->locationfound = 1;
+    //     return stack_in;
+    // }
+    // else if(i == sj.length())
+    // {//case 3: 1. The for loop ended without differing strings, and 2. the entire target_node's label was compared, 
+    //  //then the targetstring is the target label.
+    //     // prt("hit case 3");
+    //     // stack_in->index = -1;
+    //     stack_in->resultcase = Stack::CaseInTrie;   //set case to show the targetstring is in the trie
+    //     // stack_in->locationfound = 1;
+    //     return stack_in;
+    // }
+}
+
+bool HSHtrie::insertEdge(Node* parent_in, Node* child_in)
 {//insert function, uses this->hash()
     Edge* newedge;
     int hashresult;
@@ -175,13 +353,13 @@ void HSHtrie::setHash(Hash desired_hash)
     }
 }
 
-int HSHtrie::getHash(LLnode* parent_in, char head_in)
+int HSHtrie::getHash(Node* parent_in, char head_in)
 {//small abstraction for hash function so I don't have to remember the special syntax everytime
     int parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
     return (this->*hash)(parentaddr, head_in);
 }
 
-EDGnode* HSHtrie::getEdge(LLnode* parent_in, char head_in)
+EDGnode* HSHtrie::getEDGnode(Node* parent_in, char head_in)
 {
     int hash = getHash(parent_in, head_in);
     Edge* target_edge = this->edgetable[hash];
@@ -189,76 +367,33 @@ EDGnode* HSHtrie::getEdge(LLnode* parent_in, char head_in)
 
     return target_edge; 
 }
+  
+void HSHtrie::testSearch()
+{
+    std::ifstream inputstream("word_list.txt");
+    s_Stack resultinit = std::make_shared<Stack>(0, Stack::NoCase, "", this->root);
+    resultinit->currentnode = this->handle;
+    str targetword;
+    //START TIMER AND BEGIN//
+    auto start = std::chrono::high_resolution_clock::now();
+    while (inputstream >> targetword)
+    {
+        resultinit->targetstring = targetword;
+        this->search(resultinit, 0);
+    }
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    std::cout << "HSHtrie performance for search: " << microseconds << " micro-sec" << std::endl;
+    inputstream.close();
+}
+
+
+                  //HASH FUNCTIONS//
 
 int HSHtrie::primeHash(int parent_addr, char child_head)
 {//hash with basic arthimetic and prime mod
     int b = 5;
     int result = ((parent_addr + (int)child_head * (unsigned int)std::pow(b,31)) % this->size);
     return result;
-}
-  
-s_Result HSHtrie::compareLabel(s_Result result_in, LLnode* target_node)
-{//Compares the target_label to the node_label at target_node.
- //returns case the comparison falls under, as well as the index at which to split if necessary
-    std::cout << "Comparing: " << target_node->label << " against " << result_in->currentlabel << std::endl;
-
-    str& c_l = result_in->currentlabel;            //reference ("target label") to make it easier to type
-    str& n_l = target_node->label;      //reference ("node label") to make it easier to type
-    int& i = result_in->index;
-
-    for(char c:c_l) //What if comparing single letter which already exists at target_node? c=null?
-    {//for each char in the target_label, compare it against the label @ the target_node
-
-        if(i == n_l.length())
-        {//case 1: If the index for node_label is equal to the  length of node_label and
-         //the for loop is still going, the target_label is a superstring of the node_label
-            // prt("hit case 1");
-            // result_in->index = i;  //return index of where to begin 
-            result_in->resultcase = Result::CaseSuperstr; //case to show the target_label is a superstring of the node_label
-            // result_in->locationfound = 0;
-            return result_in;
-        }
-
-        if(c == n_l[i])
-        {//If current char in target_label is the same as the char @ same position in the node_label
-            i++;    //move to next char in node_label and next iteration of for loop
-        }
-        else
-        {//case 2.1: Neither target_label nor node_label have run out of chars, but the current chars differ
-         //the target_label diverges from the node_label
-            // prt("hit case 2.1");
-            // result_in->index = i; //return the index at which they diverge for splitting later
-            result_in->resultcase = Result::CaseDiv; //set case to show the target_label diverges from the node label at i
-            // result_in->locationfound = 1;
-            return result_in; 
-        }
-    }
-    //all chars in target_label have been compared
-    if(i < n_l.length())
-    {//case 2.2: 1. The for loop ended without differing strings, and 2. end of node_label was not reached
-     //The target_label is a substring of target_node's label.
-        // prt("hit case 2.1");
-        // result_in->index = i; //return the index at which they diverge for splitting later
-        result_in->resultcase = Result::CaseSubstr;   //set case to show the target_label is a substring of the label
-        // result_in->locationfound = 1;
-        return result_in;
-    }
-    else if(i == n_l.length())
-    {//case 3: 1. The for loop ended without differing strings, and 2. the entire target_node's label was compared, 
-     //then the target_label is the node_label.
-        // prt("hit case 3");
-        // result_in->index = -1;
-        result_in->resultcase = Result::CaseInTrie;   //set case to show the target_label is in the trie
-        // result_in->locationfound = 1;
-        return result_in;
-    }
-    else
-        std::cout << "Something went wrong in ctrie::compareLabel! HELP!" << std::endl;
-        return result_in;
-}
-
-Result::searchResult(int index_in, CompCase case_in)
-{//constructor for searchResult struct
-    index = index_in;
-    resultcase = case_in;
 }

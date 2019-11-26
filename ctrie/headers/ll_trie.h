@@ -1,12 +1,12 @@
 #pragma once
 #include <fstream>
 #include <chrono>
-#include "ll_node.h"
+#include "t_nodes.h"
 #include "hsh_trie.h"
-// #include <string>    //included in hsh_node.h
-// #include <iostream>  //included in hsh_node.h
-// #include <stdio.h>   //included in hsh_node.h
-// #include <memory>    //included in hsh_node.h
+// #include <string>    //included in t_nodes.h
+// #include <iostream>  //included in t_nodes.h
+// #include <stdio.h>   //included in t_nodes.h
+// #include <memory>    //included in t_nodes.h
 
 class LLtrie
 {
@@ -22,5 +22,5 @@ public:
     void search(std::string target_word);
     void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_parent, LLnode* start_node, std::string prefix_context);
     // void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_node, std::string prefix_context);
-    void testTrieSearch();
+    void testSearch();
 };
