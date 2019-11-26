@@ -59,7 +59,7 @@ public:
     //FRIENDS//
     friend struct EDGnode;
     //CONSTRUCTORS//
-    HSHtrie(int size_in, HSHtrie::Hashes hash_type); //basic
+    HSHtrie(int size_in, HSHtrie::Hashes hash_type, bool make_handle); //basic
     //MEMBER FUNCTIONS//
     bool insertEdge(LLnode* parent_in, LLnode* child_in);  //insert edge into trie function
     std::shared_ptr<searchStack> search(std::shared_ptr<searchStack> stack_in, bool insert_flag);  //search function, uses hash()

@@ -5,35 +5,36 @@
 // #include <math.h>    //included in hsh_trie.h
 // #include <fstream>   //included in hsh_trie.h 
 // #include <chrono>    //included in hsh_trie.h
-// #include <string>    //included in hsh_node.h
-// #include <iostream>  //included in hsh_node.h
-// #include <stdio.h>   //included in hsh_node.h
-// #include <memory>    //included in hsh_node.h
+// #include <string>    //included in t_nodes.h
+// #include <iostream>  //included in t_nodes.h
+// #include <stdio.h>   //included in t_nodes.h
+// #include <memory>    //included in t_nodes.h
 #include "headers/tools.h"
 
 using str = std::string;
 using Hash = HSHtrie::Hashes;
 
-int notmain()
+int main()
 {
     //SET UP DATA STREAM//
     std::ifstream inputstream("word_list.txt");
     str targetword;
-    int listsize;
+    int listsize = 1009;
     //CREATE LLtrie//
-    LLtrie* lltrie = new LLtrie;
-    //FILL IT//
-    while (inputstream >> targetword)
-    {
-        lltrie->insert(targetword);
-        listsize++;
-    }
+    // LLtrie* lltrie = new LLtrie;
+    // //FILL IT//
+    // while (inputstream >> targetword)
+    // {
+    //     lltrie->insert(targetword);
+    //     listsize++;
+    // }
     //GENERATE HASH TABLE SIZE//
-    int hashtablesize = tools::getNextPrime(listsize);
+    // int hashtablesize = tools::getNextPrime(listsize);
+    int hashtablesize = listsize;
     //DECIDE ON HASH FUNCTION//
     Hash hashtype = Hash::prime;
     //MAKE THE HSHtrie//
-    HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype);
+    HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype, 1);
     while (inputstream >> targetword)
     {
         hshtrie->insertString(targetword);
@@ -48,7 +49,7 @@ int notmain()
     // lltrie->search("aben");
     // hshtrie->testTrieSearch();
     //CLEAN UP//
-    delete lltrie;
+    // delete lltrie;
     delete hshtrie;
     return 0;
 }

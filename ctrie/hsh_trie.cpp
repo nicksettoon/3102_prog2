@@ -5,34 +5,34 @@
 // #include <memory>    //included in t_nodes.h
 
 using str = std::string;
-using Node = LLnode;
 using Edge = EDGnode;
-using s_Edge = EDGnode;
+using s_Edge = std::shared_ptr<EDGnode>;
 using Hash = HSHtrie::Hashes;
 using Stack = HSHtrie::searchStack;
 using s_Stack = std::shared_ptr<HSHtrie::searchStack>;
 using Fstream = std::ifstream;
 
-                  //CONSTRUCTORS//
+//---------------------CONSTRUCTORS----------------------------//
 //-----------------------EDGnode----------------------------//
-EDGnode::EDGnode(Node* parent_in, Node* child_in) //base constructor
+EDGnode::EDGnode(LLnode* parent_in, LLnode* child_in) //base constructor
     : parent(parent_in), child(child_in), childhead(child_in->head), nextedge(nullptr) {/*base constructor*/}
 //-----------------------HSHtrie----------------------------//
-HSHtrie::HSHtrie(int size_in, HSHtrie::Hashes hash_type)
+HSHtrie::HSHtrie(int size_in, HSHtrie::Hashes hash_type, bool make_handle)
     : size(size_in)
 {//full constructor//
     // std::cout << "HSHtrie size: " << this->size << std::endl;
     edgetable.resize(this->size);
     this->setHash(hash_type);
-
+    if(make_handle)
+        this->handle = new LLnode('$', "", 0, nullptr, nullptr);
 }
     
-Stack::searchStack(int index_in, Stack::CompCase case_in, str string_in, Node* start_node)
+Stack::searchStack(int index_in, Stack::CompCase case_in, str string_in, LLnode* start_node)
 {//constructor for searchStack struct
     index = index_in;
     resultcase = case_in;
     targetstring = string_in;
-    Node* currentnode = start_node; 
+    LLnode* currentnode = start_node; 
     currentedge = nullptr;
 }
                 //MEMBER FUNCTIONS//
@@ -48,7 +48,7 @@ void EDGnode::print()
     std::cout << "nextedge: " << this->nextedge << std::endl;
 }
 
-Edge* EDGnode::searchList(Node* target_parent, char target_childhead)
+Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
 {//searches the linked list of EDGnode nodes for node with correct parent and childhead
     /*FILL*/
     std::cout << "Finding parent: " << target_parent << " childhead: " << target_childhead << std::endl;
@@ -74,40 +74,43 @@ Edge* EDGnode::searchList(Node* target_parent, char target_childhead)
     return currentedge;
 }
 //-----------------------HSHtrie----------------------------//
-
 bool HSHtrie::insertString(str string_in)
 {//inserts string into HSHtrie
     std::cout << "Inserting: " << string_in << std::endl;
     //BUILD searchStack OBJECT//
-    s_Stack searchstack = std::make_shared<s_Stack>(0, Stack::NoCase, string_in, this->root);
+    s_Stack searchstack = std::make_shared<Stack>(0, Stack::NoCase, string_in, this->handle);
 
     //SEARCH FOR LOCATION TO INSERT//
     searchstack = this->search(searchstack, 1);
 
-    Node c_n = &(searchstack->currentnode);
+    auto& c_n = searchstack->currentnode;
     int& i = searchstack->index;
 
-    //INTERPRET SEARCH RESULT//
+    //INTERPRET SEARCH RESULT TO DETERMINE HOW TO//
+    LLnode* newnode;
+    LLnode* newnode2;
+    Edge* newedge;
+    Edge* newedge2;
     switch (searchstack->resultcase)
     {
     case Stack::CaseNotInTrie:
         //INSERT//
         //make new node
-        Node* newnode = new Node(string_in[i], string_in.substr(i+1), 1);
+        newnode = new LLnode(c_n->label[i], string_in.substr(i+1), 1, nullptr, nullptr);
         //make new edge
-        Edge newedge = new Edge(c_n, newnode);
+        newedge = new Edge(c_n, newnode);
         break;
 
     case Stack::CaseSubstr:
         //INSERT//
         //make new node
-        Node* newnode = new Node(c_n->label[i], string_in.substr(i+1), 1);
+        newnode = new LLnode(c_n->label[i], string_in.substr(i+1), 1, nullptr, nullptr);
         //cut new parent at index
         c_n->label = c_n->label.substr(0,i-1);
         //set new parent as wordend
         c_n->wordEnd = 1;
         //make new edge
-        Edge newedge = new Edge(c_n, newnode);
+        newedge = new Edge(c_n, newnode);
         break;
 
     case Stack::CaseDiv: //
@@ -115,23 +118,23 @@ bool HSHtrie::insertString(str string_in)
         //new node for string being inserted
         if(i == string_in.length())
         {//if this is the case label needs to be empty str
-            Node* newnode = new Node(string_in[i], "", 1); }
+            newnode = new LLnode(string_in[i], "", 1, nullptr, nullptr); }
         else
-            Node* newnode = new Node(string_in[i], string_in.substr(i+1), 1);
+            newnode = new LLnode(string_in[i], string_in.substr(i+1), 1, nullptr, nullptr);
         //new node for remaining label of current node 
-        Node* remainingstr = new Node(c_n->label[i], string_in.substr(i+1), c_n->wordEnd);
+        newnode2 = new LLnode(c_n->label[i], string_in.substr(i+1), c_n->wordEnd, nullptr, nullptr);
         //cut parent's label at index and mark as not a word
         c_n->label = c_n->label.substr(0,i-1);
         c_n->wordEnd = 0;
         //make new edge
-        Edge newnodeedge = new Edge(c_n, newnode);
-        Edge remainingstredge = new Edge(c_n, remainingstr);
+        newedge = new Edge(c_n, newnode);
+        newedge2 = new Edge(c_n, newnode2);
         break;
 
     case Stack::CaseInTrie:
         //PRINT NODE AS PROOF//
         std::cout << "Found node:" << std::endl;
-        stackout->currentedge->child->print();
+        searchstack->currentedge->child->print();
         break;
 
     case Stack::CaseFound:
@@ -150,7 +153,7 @@ bool HSHtrie::insertString(str string_in)
     if(this->insertString(searchstack->targetstring))
         return 1;
     else
-        std::cout << "Inserting " << searchstack->targetstring <<< " failed." << std::endl;
+        std::cout << "Inserting " << searchstack->targetstring << " failed." << std::endl;
         return 0;
 }
 
@@ -177,7 +180,7 @@ s_Stack HSHtrie::search(s_Stack stack_in, bool insert_flag)
     case Stack::CaseSuperstr:
         stackout->currentnode = stackout->currentedge->child;  //move the search's currentnode to the child
         //maybe edit targetstring here?
-        stackout = search(stackout); //recurse with child as new focus
+        stackout = search(stackout, 1); //recurse with child as new focus
         return stackout;
     
     case Stack::CaseInTrie:
@@ -298,7 +301,7 @@ s_Stack HSHtrie::compareSubstr(s_Stack stack_in)
     // }
 }
 
-bool HSHtrie::insertEdge(Node* parent_in, Node* child_in)
+bool HSHtrie::insertEdge(LLnode* parent_in, LLnode* child_in)
 {//insert function, uses this->hash()
     Edge* newedge;
     int hashresult;
@@ -353,13 +356,13 @@ void HSHtrie::setHash(Hash desired_hash)
     }
 }
 
-int HSHtrie::getHash(Node* parent_in, char head_in)
+int HSHtrie::getHash(LLnode* parent_in, char head_in)
 {//small abstraction for hash function so I don't have to remember the special syntax everytime
     int parentaddr = reinterpret_cast<std::uintptr_t>(parent_in); 
     return (this->*hash)(parentaddr, head_in);
 }
 
-EDGnode* HSHtrie::getEDGnode(Node* parent_in, char head_in)
+EDGnode* HSHtrie::getEDGnode(LLnode* parent_in, char head_in)
 {
     int hash = getHash(parent_in, head_in);
     Edge* target_edge = this->edgetable[hash];
@@ -371,7 +374,7 @@ EDGnode* HSHtrie::getEDGnode(Node* parent_in, char head_in)
 void HSHtrie::testSearch()
 {
     std::ifstream inputstream("word_list.txt");
-    s_Stack resultinit = std::make_shared<Stack>(0, Stack::NoCase, "", this->root);
+    s_Stack resultinit = std::make_shared<Stack>(0, Stack::NoCase, "", this->handle);
     resultinit->currentnode = this->handle;
     str targetword;
     //START TIMER AND BEGIN//
