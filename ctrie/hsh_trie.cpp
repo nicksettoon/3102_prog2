@@ -76,7 +76,7 @@ Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
 //-----------------------HSHtrie----------------------------//
 bool HSHtrie::insertString(str string_in)
 {//inserts string into HSHtrie
-    std::cout << "Inserting: " << string_in << std::endl;
+    // std::cout << "Inserting: " << string_in << std::endl;
     //BUILD searchStack OBJECT//
     s_Stack searchstack = std::make_shared<Stack>(0, Stack::NoCase, string_in, this->handle);
 
@@ -156,7 +156,7 @@ bool HSHtrie::insertString(str string_in)
     //CONFIRM INSERT WORKED//
     if(this->search(string_in))
     {
-        std::cout << "Insert Success" << std::endl;
+        // std::cout << "Insert Success" << std::endl;
         return 1;
     }
     else

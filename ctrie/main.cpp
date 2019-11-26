@@ -21,34 +21,28 @@ int main()
     str targetword;
     int listsize = 1009;
     //CREATE LLtrie//
-    // LLtrie* lltrie = new LLtrie;
-    // //FILL IT//
-    // while (inputstream >> targetword)
-    // {
-    //     lltrie->insert(targetword);
-    //     listsize++;
-    // }
+    LLtrie* lltrie = new LLtrie;
+    //FILL IT//
+    while (inputstream >> targetword)
+    {
+        lltrie->insert(targetword);
+        listsize++;
+    }
     //GENERATE HASH TABLE SIZE//
-    // int hashtablesize = tools::getNextPrime(listsize);
-    int hashtablesize = listsize;
+    int hashtablesize = tools::getNextPrime(listsize);
     //DECIDE ON HASH FUNCTION//
     Hash hashtype = Hash::prime;
     //MAKE THE HSHtrie//
     HSHtrie* hshtrie = new HSHtrie(hashtablesize, hashtype, 1);
-    while (inputstream >> targetword)
     {
         hshtrie->insertString(targetword);
     }
     inputstream.close();
-    //GET ALL NODES FROM LLtrie// 
-    // lltrie->preorderTraversal(hshtrie, nullptr, lltrie->root, lltrie->root->label);
-    // std::cout << "finished" << std::endl;
-    // std::cout << "Copying LLtrie to HSHtrie." << std::endl;
     //RUN TEST FOR EACH TRIE//
-    // lltrie->testSearch();
+    lltrie->testSearch();
     hshtrie->testSearch();
     //CLEAN UP//
-    // delete lltrie;
+    delete lltrie;
     delete hshtrie;
     return 0;
 }
