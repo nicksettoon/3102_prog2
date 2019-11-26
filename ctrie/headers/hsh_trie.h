@@ -51,7 +51,7 @@ public:
         CompCase resultcase;        //resulting case of the if statements
         LLnode* currentnode;        //the node being searched. the one calling compareSubstr
         EDGnode* currentedge;        //the current edge being used. Currentnode is the parent of this edge
-        std::string targetlabel;    //the label compareSubstr compares against
+        // std::string targetlabel;    //the label compareSubstr compares against
         std::string targetstring;   //the original string the search stack was made to find
         //CONSTRUCTORS//
         searchStack(int index_in, CompCase case_in, std::string string_in, LLnode* start_node);
@@ -61,14 +61,16 @@ public:
     //CONSTRUCTORS//
     HSHtrie(int size_in, HSHtrie::Hashes hash_type, bool make_handle); //basic
     //MEMBER FUNCTIONS//
-    bool insertEdge(LLnode* parent_in, LLnode* child_in);  //insert edge into trie function
-    std::shared_ptr<searchStack> search(std::shared_ptr<searchStack> stack_in, bool insert_flag);  //search function, uses hash()
-    void testSearch();
-    void setHash(Hashes hash_type);  //set the desired hash function for the HSHtrie
     bool insertString(std::string string_in);    //insert string into HSHtrie
+    bool insertEdgeFromLLtrie(LLnode* parent_in, LLnode* child_in);  //insert edge into trie function
+    bool search(std::string word_in);  //frontend for calling search externally
+    int testSearch();
+    void setHash(Hashes hash_type);  //set the desired hash function for the HSHtrie
     // void preorderTraversal(LLnode* start_node, std::string prefix_context);
 
 private:
+    std::shared_ptr<searchStack> stackSearch(std::shared_ptr<searchStack> stack_in, bool insert_flag);  //search function, uses hash()
+    bool insertEdge(EDGnode* edge_in);
     std::shared_ptr<searchStack> compareSubstr(std::shared_ptr<searchStack> stack_in); //compares the label at a given HSHnode
     EDGnode* getEDGnode(LLnode* parent_in, char child_in); //hashes and handles collisions
     int getHash(LLnode* target_node, char head_in); //abstracts syntax of using hash()
