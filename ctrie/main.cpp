@@ -45,9 +45,8 @@ int main()
     // std::cout << "finished" << std::endl;
     // std::cout << "Copying LLtrie to HSHtrie." << std::endl;
     //RUN TEST FOR EACH TRIE//
-    // lltrie->testTrieSearch();
-    // lltrie->search("aben");
-    // hshtrie->testTrieSearch();
+    // lltrie->testSearch();
+    hshtrie->testSearch();
     //CLEAN UP//
     // delete lltrie;
     delete hshtrie;

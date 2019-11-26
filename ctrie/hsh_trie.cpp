@@ -40,19 +40,19 @@ Stack::searchStack(int index_in, Stack::CompCase case_in, str string_in, LLnode*
 //-----------------------EDGnode----------------------------//
 void EDGnode::print()
 {//prints the edge instance
-    std::cout << "Edge: " << this << "\t";
-    if(this->parent != nullptr)
-        std::cout << "parent: " << this->parent->head << this->parent->label << "\t";
-    std::cout << "child: " << this->child->head << this->child->label <<"\t";
-    std::cout << "childhead: " << this->childhead << "\t";
-    std::cout << "nextedge: " << this->nextedge << std::endl;
+    // std::cout << "Edge: " << this << "\t";
+    // if(this->parent != nullptr)
+    //     std::cout << "parent: " << this->parent->head << this->parent->label << "\t";
+    // std::cout << "child: " << this->child->head << this->child->label <<"\t";
+    // std::cout << "childhead: " << this->childhead << "\t";
+    // std::cout << "nextedge: " << this->nextedge << std::endl;
 }
 
 Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
 {//searches the linked list of EDGnode nodes for node with correct parent and childhead
     /*FILL*/
-    std::cout << "Finding parent: " << target_parent << " childhead: " << target_childhead << std::endl;
-    std::cout << "Starting from: ";
+    // std::cout << "Finding parent: " << target_parent << " childhead: " << target_childhead << std::endl;
+    // std::cout << "Starting from: ";
     this->print();
         
     Edge* currentedge = this;
@@ -70,7 +70,7 @@ Edge* EDGnode::searchList(LLnode* target_parent, char target_childhead)
             }
         }
     }
-    std::cout << "Did not find edge which matched the parent and childhead given." << std::endl;
+    // std::cout << "Did not find edge which matched the parent and childhead given." << std::endl;
     return currentedge;
 }
 //-----------------------HSHtrie----------------------------//
@@ -137,14 +137,14 @@ bool HSHtrie::insertString(str string_in)
 
     case Stack::CaseInTrie:
         //PRINT NODE AS PROOF//
-        std::cout << "Found node:" << std::endl;
+        // std::cout << "Found node:" << std::endl;
         searchstack->currentedge->child->print();
         break;
 
     case Stack::CaseFound:
         //NOTIFY AND PRINT NODE//
-        std::cout << "The string is in the trie. It's just not marked as a word." << std::endl;
-        std::cout << "Inserting..." << std::endl;
+        // std::cout << "The string is in the trie. It's just not marked as a word." << std::endl;
+        // std::cout << "Inserting..." << std::endl;
         searchstack->currentedge->child->wordEnd = 1; 
         break;
 
@@ -154,11 +154,19 @@ bool HSHtrie::insertString(str string_in)
     }    
 
     //CONFIRM INSERT WORKED//
-    if(this->insertString(string_in))
+    if(this->search(string_in))
+    {
+        std::cout << "Insert Success" << std::endl;
         return 1;
+    }
     else
+    {
         std::cout << "Inserting " << searchstack->targetstring << " failed." << std::endl;
         return 0;
+    }
+
+    std::cout << "You simply must teach a master class in reaching impossible locations in programs." << std::endl;
+    return 0;
 }
 
 bool HSHtrie::search(str word_in)
@@ -166,8 +174,10 @@ bool HSHtrie::search(str word_in)
     s_Stack searchstack = std::make_shared<Stack>(0, Stack::NoCase, "", this->handle);
     searchstack->currentnode = this->handle;
     searchstack->targetstring = word_in;
-    this->stackSearch(searchstack, 0);
-    return 1;
+    searchstack = this->stackSearch(searchstack, 0);
+    if(searchstack->resultcase = Stack::CaseInTrie)
+        return 1;
+    return 0;
 }
 
 s_Stack HSHtrie::stackSearch(s_Stack stack_in, bool insert_flag)
@@ -179,7 +189,7 @@ s_Stack HSHtrie::stackSearch(s_Stack stack_in, bool insert_flag)
 
     if (stackout->currentedge == nullptr)
     {//if that edge doesn't exist, there is no child node with that head
-        std::cout << stackout->targetstring << " was not found in the trie." << std::endl;
+        // std::cout << stackout->targetstring << " was not found in the trie." << std::endl;
         stackout->resultcase = Stack::CaseNotInTrie;
         // stackout->locationfound = NULL;
         return stackout;
@@ -375,7 +385,7 @@ EDGnode* HSHtrie::getEDGnode(LLnode* parent_in, char head_in)
     Edge* targetedge = this->edgetable[hash];
     if(targetedge == nullptr)
     {
-        std::cout << "Did not find that edge in edgetable." << std::endl;
+        // std::cout << "Did not find that edge in edgetable." << std::endl;
         return targetedge;
     }
     targetedge = targetedge->searchList(parent_in, head_in);
