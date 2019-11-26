@@ -17,7 +17,10 @@ using Hash = HSHtrie::Hashes;
 int main()
 {
     //SET UP DATA STREAM//
-    std::ifstream inputstream("word_list.txt");
+    str filename;
+    std::cout << "Please enter the filename you wish to use. It must be correct with the file extension. I'm not doing error correction here." << std::endl;
+    std::getline(std::cin, filename);
+    std::ifstream inputstream(filename);
     str targetword;
     int listsize = 1009;
     //CREATE LLtrie//
@@ -39,8 +42,8 @@ int main()
     }
     inputstream.close();
     //RUN TEST FOR EACH TRIE//
-    lltrie->testSearch();
-    hshtrie->testSearch();
+    lltrie->testSearch(filename);
+    hshtrie->testSearch(filename);
     //CLEAN UP//
     delete lltrie;
     delete hshtrie;

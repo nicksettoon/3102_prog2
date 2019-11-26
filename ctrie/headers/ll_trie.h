@@ -22,5 +22,5 @@ public:
     void search(std::string target_word);
     void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_parent, LLnode* start_node, std::string prefix_context);
     // void preorderTraversal(HSHtrie* target_hashtrie, LLnode* start_node, std::string prefix_context);
-    void testSearch();
+    void testSearch(std::string file_in);
 };

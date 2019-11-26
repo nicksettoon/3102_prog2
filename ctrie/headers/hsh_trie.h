@@ -64,7 +64,7 @@ public:
     bool insertString(std::string string_in);    //insert string into HSHtrie
     bool insertEdgeFromLLtrie(LLnode* parent_in, LLnode* child_in);  //insert edge into trie function
     bool search(std::string word_in);  //frontend for calling search externally
-    int testSearch();
+    int testSearch(std::string file_in);
     void setHash(Hashes hash_type);  //set the desired hash function for the HSHtrie
     // void preorderTraversal(LLnode* start_node, std::string prefix_context);
 

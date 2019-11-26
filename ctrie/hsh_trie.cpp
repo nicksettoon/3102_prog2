@@ -392,9 +392,9 @@ EDGnode* HSHtrie::getEDGnode(LLnode* parent_in, char head_in)
     return targetedge; 
 }
   
-int HSHtrie::testSearch()
+int HSHtrie::testSearch(str filename_in)
 {
-    std::ifstream inputstream("word_list.txt");
+    std::ifstream inputstream(filename_in);
     str targetword;
     //START TIMER AND BEGIN//
     auto start = std::chrono::high_resolution_clock::now();

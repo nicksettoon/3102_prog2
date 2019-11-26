@@ -41,9 +41,9 @@ void LLtrie::preorderTraversal(HSHtrie* target_hashtrie, LLnode* parent_in, LLno
     }
 }
 
-void LLtrie::testSearch()
+void LLtrie::testSearch(str filename_in)
 {//runs searches for every word in the stream_in and outputs the time it takes in microseconds
-    std::ifstream inputstream("word_list.txt");
+    std::ifstream inputstream(filename_in);
     str targetword;
     //START TIMER AND BEGIN//
     auto start = std::chrono::high_resolution_clock::now();
